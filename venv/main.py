@@ -42,7 +42,6 @@ def register_user():
 
     tk.Label(self, text="등록 완료", fg="#00462A", font=("맑은 고딕", 11)).pack()
 
-
 class SampleApp(tk.Tk):
     def __init__(self):
         tk.Tk.__init__(self)
@@ -59,6 +58,7 @@ class SampleApp(tk.Tk):
         self._frame = new_frame
         self._frame.pack()
 
+
 class StartPage(tk.Frame):
     def __init__(self, master):
         tk.Frame.__init__(self, master)
@@ -74,6 +74,7 @@ class StartPage(tk.Frame):
         tk.Button(self, text="실무자 등록", height="1", width="20", fg = "#00462A",
                   command=lambda: master.switch_frame(Register), font=('맑은 고딕', 13)).pack()
 
+#실무자 로그인 페이지
 class Login(tk.Frame):
     def __init__(self, master):
         tk.Frame.__init__(self,master)
@@ -118,6 +119,7 @@ class Login(tk.Frame):
             else:
                 user_not_found(self)
 
+#관리자 로그인 페이지
 class AdminLogin(tk.Frame):
     def __init__(self, master):
         tk.Frame.__init__(self,master)
@@ -200,6 +202,7 @@ class UserPage(tk.Frame):
         tk.Frame.__init__(self, master)
         tk.Label(self, text="실무자 페이지", bg="#00462A", width="300", height="3", fg="white", font=('맑은 고딕', 13)).pack()
         tk.Label(self, text="").pack()
+
 
 
 if __name__ == "__main__":
