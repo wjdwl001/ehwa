@@ -45,24 +45,6 @@ class UserPage(tk.Frame):
     val_majorClass = "" #9. 대분류
     array_middleClass = [] #5. 중분류항목
     array_subClass = [] #6. 소분류항목
-    # 5. 중분류항목
-    if entry_middleClass_product.get():
-        array_middleClass.append("제작품")
-    if entry_middleClass_material.get():
-        array_middleClass.append("제작재료")
-    if entry_middleClass_tool.get():
-        array_middleClass.append("제작도구")
-    if entry_middleClass_producer.get():
-        array_middleClass.append("제작자")
-    # 6. 소분류항목
-    if entry_subClass_metal.get():
-        array_subClass.append("금속")
-    if entry_subClass_wood.get():
-        array_subClass.append("목재")
-    if entry_middleClass_tool.get():
-        array_middleClass.append("제작도구")
-    if entry_middleClass_producer.get():
-        array_middleClass.append("제작자")
     val_relatedWord = "" #7. 관련어
     val_detail = "" #8. 상세정보
 
@@ -82,7 +64,24 @@ class UserPage(tk.Frame):
             val_nickname = nickname.get()  # 3. 이명
             val_generalName = generalName.get()  # 4. 범칭
             val_majorClass = majorClass.get()  # 9. 대분류
-
+            # 5. 중분류항목
+            if entry_middleClass_product.get():
+                array_middleClass.append("제작품")
+            if entry_middleClass_material.get():
+                array_middleClass.append("제작재료")
+            if entry_middleClass_tool.get():
+                array_middleClass.append("제작도구")
+            if entry_middleClass_producer.get():
+                array_middleClass.append("제작자")
+            # 6. 소분류항목
+            if entry_subClass_metal.get():
+                array_subClass.append("금속")
+            if entry_subClass_wood.get():
+                array_subClass.append("목재")
+            if entry_middleClass_tool.get():
+                array_middleClass.append("제작도구")
+            if entry_middleClass_producer.get():
+                array_middleClass.append("제작자")
             val_relatedWord = relatedWord.get()  # 7. 관련어
             val_detail = detail.get()  # 8. 상세정보
 
