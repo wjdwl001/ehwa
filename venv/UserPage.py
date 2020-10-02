@@ -3,7 +3,6 @@ import tkinter as tk
 import tkinter.ttk
 import tkinter.font
 import os
-import pymysql
 import uuid
 from tkinter import messagebox
 
@@ -42,7 +41,8 @@ class UserPage(tk.Frame):
         frame00.pack(fill=tk.X)
 
         def check():
-            val_state = ""
+            global val_state
+            val_state = tk.StringVar()
             if entry_state.get() == 1:
                 val_state = "대상"
             if entry_state.get() == 2:
@@ -85,25 +85,32 @@ class UserPage(tk.Frame):
         frame0 = tk.Frame(self)
         frame0.pack(fill=tk.X)
 
+        global val_ID
+        val_ID = tk.StringVar()
+        ID = uuid.uuid1()
+        val_ID = ID.hex[0:9] #랜덤한 고유번호 16진수로 10자리로 만들었습니다
+
         lbl_ID = tk.Label(frame0, text="ID", width=10)
         lbl_ID.pack(side=tk.LEFT, padx=10, pady=10)
 
-        ID = uuid.uuid1()
-        ID = ID.hex[0:10]
 
         entry_ID = tk.Text(frame0, width=10, height=1)
         entry_ID.insert(1.0, ID)
         entry_ID.configure(state="disabled")
         entry_ID.pack(side=tk.LEFT, padx=10, pady=10)
 
+
         # 1.색인어(한글)
         frame1 = tk.Frame(self)
         frame1.pack(fill=tk.X)
 
+        global val_indexKorean
+        val_indexKorean = tk.StringVar()
+
         lbl_indexKorean = tk.Label(frame1, text="색인어(한글)", width=10)
         lbl_indexKorean.pack(side=tk.LEFT, padx=10, pady=10)
 
-        entry_indexKorean = tk.Entry(frame1)
+        entry_indexKorean = tk.Entry(frame1, textvariable=val_indexKorean)
         entry_indexKorean.pack(side=tk.LEFT, padx=10)
 
 
@@ -111,10 +118,13 @@ class UserPage(tk.Frame):
         frame2 = tk.Frame(self)
         frame2.pack(fill=tk.X)
 
+        global val_indexChinese
+        val_indexChinese = tk.StringVar()
+
         lbl_indexChinese = tk.Label(frame2, text="색인어(한자)", width=10)
         lbl_indexChinese.pack(side=tk.LEFT, padx=10, pady=10)
 
-        entry_indexChinese = tk.Entry(frame2)
+        entry_indexChinese = tk.Entry(frame2, textvariable=val_indexChinese)
         entry_indexChinese.pack(side=tk.LEFT,padx=10)
 
 
@@ -122,10 +132,13 @@ class UserPage(tk.Frame):
         frame3 = tk.Frame(self)
         frame3.pack(fill=tk.X)
 
+        global val_nickname
+        val_nickname = tk.StringVar()
+
         lbl_nickname = tk.Label(frame3, text="이명", width=10)
         lbl_nickname.pack(side=tk.LEFT, padx=10, pady=10)
 
-        entry_nickname = tk.Entry(frame3)
+        entry_nickname = tk.Entry(frame3, textvariable=val_nickname)
         entry_nickname.pack(side=tk.LEFT, padx=10)
 
 
@@ -133,10 +146,13 @@ class UserPage(tk.Frame):
         frame4 = tk.Frame(self)
         frame4.pack(fill=tk.X)
 
+        global val_generalName
+        val_generalName = tk.StringVar()
+
         lbl_generalName = tk.Label(frame4, text="범칭", width=10)
         lbl_generalName.pack(side=tk.LEFT, padx=10, pady=10)
 
-        entry_generalName = tk.Entry(frame4)
+        entry_generalName = tk.Entry(frame4, textvariable=val_generalName)
         entry_generalName.pack(side=tk.LEFT, padx=10)
 
 
@@ -145,12 +161,15 @@ class UserPage(tk.Frame):
         frame9.pack(fill=tk.X)
 
         values_detail = ["의궤", "실록", "승정원일기", "일성록", "전례서", "법전", "지리지", "등록", "발기", "유서류", "문집", "일기", "기타"]
+        global val_majorClass
+        val_majorClass = tk.StringVar()
 
         lbl_majorClass = tk.Label(frame9, text="대분류\n자료 유형별", width=10)
         lbl_majorClass.pack(side=tk.LEFT, padx=10, pady=10)
 
-        drBox_majorClass = tkinter.ttk.Combobox(frame9, height=15, values=values_detail, state="readonly")
+        drBox_majorClass = tkinter.ttk.Combobox(frame9, height=15, values=values_detail, textvariable=val_majorClass ,state="readonly")
         drBox_majorClass.pack(side=tk.LEFT, pady=10, padx=10, expand=False)
+
 
         # 5. 중분류항목
         frame5 = tk.Frame(self)
@@ -158,6 +177,7 @@ class UserPage(tk.Frame):
 
         array_middleClass = []
 
+        #이 함수는 나중에 저장할 때 실행할게요
         def middleClass_array():
             if entry_middleClass_product.get():
                 array_middleClass.append("제작품")
@@ -187,6 +207,7 @@ class UserPage(tk.Frame):
         entry_middleClass_material.pack(side=tk.LEFT, padx=10)
         entry_middleClass_tool.pack(side=tk.LEFT, padx=10)
         entry_middleClass_producer.pack(side=tk.LEFT, padx=10)
+
 
         # 6. 소분류항목
         frame6 = tk.Frame(self)
@@ -248,15 +269,22 @@ class UserPage(tk.Frame):
         frame7 = tk.Frame(self)
         frame7.pack(fill=tk.X)
 
+        global val_relatedWord
+        val_relatedWord = tk.StringVar()
+
         lbl_relatedWord = tk.Label(frame7, text="관련어", width=10)
         lbl_relatedWord.pack(side=tk.LEFT, padx=10, pady=10)
 
         entry_relatedWord = tk.Entry(frame7)
         entry_relatedWord.pack(side=tk.LEFT, padx=10)
 
+
         # 8. 상세정보
         frame8 = tk.Frame(self)
         frame8.pack(fill=tk.X)
+
+        global val_detail
+        val_detail = tk.StringVar()
 
         lbl_detail = tk.Label(frame8, text="상세정보", width=10)
         lbl_detail.pack(side=tk.LEFT, padx=10, pady=10)
@@ -268,7 +296,7 @@ class UserPage(tk.Frame):
 
 def main():
     root = tk.Tk()
-    root.geometry("1000x600+100+100")
+    root.geometry("1000x700+100+100")
     root.resizable(False,False)
     app = UserPage(root)
     root.mainloop()
