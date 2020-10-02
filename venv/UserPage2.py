@@ -31,17 +31,11 @@ class UserPage(tk.Frame):
         self.master.title("조선시대공예 DB입력기")
         self.pack(fill=tk.BOTH, expand=True)
 
-        # 9. 대분류
-        frame9 = tk.Frame(self)
-        frame9.pack(fill=tk.X)
+        tk.Label(self, text="이화여자대학교 물질문화연구팀\n조선시대공예 DB입력기 #2", bg="#00462A", width="300", height="3", fg="white",
+                 font=('맑은 고딕', 13)).pack()
+        tk.Label(self, text="").pack()
 
-        values_detail = ["의궤", "실록", "승정원일기", "일성록", "전례서", "법전", "지리지", "등록", "발기", "유서류", "문집", "일기", "기타"]
 
-        lbl_majorClass = tk.Label(frame9, text="대분류\n자료 유형별", width=10)
-        lbl_majorClass.pack(side=tk.LEFT, padx=10, pady=10)
-
-        drBox_majorClass = tkinter.ttk.Combobox(frame9, height=15, values=values_detail, state="readonly")
-        drBox_majorClass.pack(side=tk.LEFT, pady=10, padx=10, expand=False)
 
 
         # 10. 자료원문
