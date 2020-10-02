@@ -2,6 +2,8 @@
 import tkinter as tk
 import tkinter.font
 import os
+import pymysql
+from tkinter import messagebox
 
 #color : #00462A #77E741
 
@@ -32,15 +34,30 @@ def register_user():
     password_info = password.get()
 
     #이부분 DB에 맞게 바꾸면됩니다.
-    file = open(username_info, "w")
-    file.write(username_info + "\n")
-    file.write(password_info)
-    file.close()
+    mydb, mc = connect_db()
+    sql = "INSERT INTO user (ID, Password) VALUES (%s, %s)"
+    val = (username_info, password_info)
+    try:
+        mc.execute(sql, val)
+        mydb.commit()
+        messagebox.showinfo("알림", "등록 완료!")
+    except:
+        messagebox.showinfo("알림", "이미 존재하는 ID입니다!")
 
-    username_entry.delete(0, END)
-    password_entry.delete(0, END)
+    username_entry.delete(0, tk.END)
+    password_entry.delete(0, tk.END)
 
-    tk.Label(self, text="등록 완료", fg="#00462A", font=("맑은 고딕", 11)).pack()
+#db접속 함수
+def connect_db():
+    mydb = pymysql.connect(
+        host="localhost",
+        port=3306,
+        user="root",
+        passwd="",
+        database="ehwa"
+    )
+    mc = mydb.cursor()
+    return (mydb, mc)
 
 class SampleApp(tk.Tk):
     def __init__(self):
@@ -111,13 +128,19 @@ class Login(tk.Frame):
             username_login_entry.delete(0, tk.END)
             password_login_entry.delete(0, tk.END)
 
-            if username1 == "admin":
-                if password1 == "admin":
+            mydb, mc = connect_db()
+            sql = "SELECT * FROM user Where ID = %s"
+            val = username1
+            mc.execute(sql, val)
+            if mc.rowcount:
+                sql = "SELECT * FROM user Where Password = %s"
+                val = password1
+                mc.execute(sql, val)
+                if mc.rowcount:
                     master.switch_frame(UserPage).pack()
                 else:
                     password_not_recognised(self)
-            else:
-                user_not_found(self)
+            else: user_not_found(self)
 
 #관리자 로그인 페이지
 class AdminLogin(tk.Frame):
@@ -148,19 +171,26 @@ class AdminLogin(tk.Frame):
 
         def admin_login_verify(self, admin_username_verify, admin_password_verify, admin_username_login_entry,
                                admin_password_login_entry):
+            #db에서 관리자 id, pw 확인 후 login
+            mydb, mc = connect_db()
+            sql = "SELECT * FROM admin Where ID = %s"
             username = admin_username_verify.get()
             password = admin_password_verify.get()
+            val = username
+            mc.execute(sql, val)
+            if mc.rowcount:
+                sql = "SELECT * FROM admin Where Password = %s"
+                val = password
+                mc.execute(sql, val)
+                if mc.rowcount:
+                    master.switch_frame(AdminPage).pack()
+                else :
+                    password_not_recognised(self)
+
+            else : user_not_found(self)
+
             admin_username_login_entry.delete(0, tk.END)
             admin_password_login_entry.delete(0, tk.END)
-
-            #관리자 아이디, 비밀번호 확인
-            if username == "admin":
-                if password == "admin":
-                    master.switch_frame(AdminPage).pack()
-                else:
-                    password_not_recognised(self)
-            else:
-                user_not_found(self)
 
 #실무자 등록 페이지
 class Register(tk.Frame):
