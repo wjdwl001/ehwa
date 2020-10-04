@@ -3,8 +3,10 @@ from tkinter import ttk
 import uuid
 import tkinter.font
 import os
-from tkinter import messagebox
+import tkcalendar
 import pymysql
+from tkinter import messagebox
+from datetime import datetime
 #color : #00462A #77E741
 
 #db접속 함수
@@ -47,6 +49,11 @@ class UserPage(tk.Frame):
     array_subClass = [] #6. 소분류항목
     val_relatedWord = "" #7. 관련어
     val_detail = "" #8. 상세정보
+    array_referDoc = [] #10. 자료원문
+    array_refer = [] #11. 출전
+    val_relic_class = ""
+    val_note = "" #17. 비고
+
 
     def __init__(self, master, *args, **kwargs):
         def save_temp():
@@ -82,8 +89,13 @@ class UserPage(tk.Frame):
                 array_middleClass.append("제작도구")
             if entry_middleClass_producer.get():
                 array_middleClass.append("제작자")
-            val_relatedWord = relatedWord.get()  # 7. 관련어
-            val_detail = detail.get()  # 8. 상세정보
+            # 7. 관련어
+            val_relatedWord = relatedWord.get()
+            # 8. 상세정보
+            val_detail = detail.get()
+            # 17.비고
+            val_note = note.get()
+
 
             mydb, mc = connect_db()
             sql = "INSERT INTO temp(대상, 고유번호, 색인어한글, 색인어한자, 이명, 범칭, 관련어, 상세정보, 대분류) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s)"
@@ -96,6 +108,8 @@ class UserPage(tk.Frame):
             except:
                 messagebox.showinfo("알림", "입력에 실패했습니다!")
 
+
+        #스크롤바
         super().__init__(master, *args, **kwargs)
         canvas = tk.Canvas(self, width=980, height=800)
         scrollbar = ttk.Scrollbar(self, orient="vertical", command=canvas.yview)
@@ -115,6 +129,8 @@ class UserPage(tk.Frame):
         canvas.pack(side="left", fill="both", expand=True)
         scrollbar.pack(side="right", fill="y")
 
+
+        #tkinter 화면 시작
         self.master = master
         self.master.title("조선시대공예 DB입력기")
         self.pack(fill=tk.BOTH, expand=True)
@@ -156,6 +172,7 @@ class UserPage(tk.Frame):
         entry_state_nonsubject.pack(side=tk.RIGHT, padx=10)
         entry_state_subject.pack(side=tk.RIGHT, padx=10)
         action = tk.Button(frame00, text="확인", command=check)
+
 
         # 구분선
         canv = tk.Canvas(self.scrollable_frame, height=10, width=1000)
@@ -338,15 +355,21 @@ class UserPage(tk.Frame):
         entry_detail = tk.Text(frame8)
         entry_detail.pack(fill=tk.X, padx=10, expand=True)
 
+        canv = tk.Canvas(self.scrollable_frame, height=10, width=1000)
+        line = canv.create_line(00, 10, 1000, 10, fill="#00462A")
+        canv.pack()
+
         # 10. 자료원문
         frame10 = tk.Frame(self.scrollable_frame)
         frame10.pack(fill=tk.X, pady=10)
 
-        lbl_detail = tk.Label(frame10, text="자료원문", width=10)
-        lbl_detail.pack(side=tk.LEFT, padx=10, pady=30)
+        referDoc = tk.StringVar()
 
-        entry_detail = tk.Entry(frame10)
-        entry_detail.pack(fill=tk.BOTH, padx=10, expand=True)
+        lbl_referDoc = tk.Label(frame10, text="자료원문", width=10)
+        lbl_referDoc.pack(side=tk.LEFT, padx=10, pady=30)
+
+        entry_referDoc = tk.Entry(frame10)
+        entry_referDoc.pack(fill=tk.BOTH, padx=10, expand=True)
 
         # 11. 출전
         frame11 = tk.Frame(self.scrollable_frame)
@@ -386,39 +409,61 @@ class UserPage(tk.Frame):
         entry_refer_institution.grid(column="2", row="6")
         entry_refer_instInfo = tk.Entry(frame11)
         entry_refer_instInfo.grid(column="2", row="7")
+        tk.Label(frame11).grid()
+
+        #구분선
+        canv = tk.Canvas(self.scrollable_frame, height=10, width=1000)
+        line = canv.create_line(0, 10, 1000, 10, fill="#00462A")
+        canv.pack()
 
         # 12. 입력자
         frame12 = tk.Frame(self.scrollable_frame)
-        frame12.pack(fill=tk.X, expand=True, pady=30)
+        frame12.pack(fill=tk.X,expand=True)
 
-        lbl_entryPerson = tk.Label(frame12, text="입력자", width=10)
-        lbl_entryPerson.grid(column="0", row ="0")
-        lbl_entryDate = tk.Label(frame12, text="입력날짜", width=10)
-        lbl_entryDate.grid(column="3", row="0")
+        button_entryPerson = tk.Button(frame12, text="입력자 추가")
+        button_entryPerson.grid(column="0",row="0",padx=10, pady=10)
 
+        #def Plus_entryPerson(self, frame12):
+        lbl_entryPerson = tk.Label(frame12, text="입력자%s" % (1), width=10)
         entry_entryPerson = tk.Entry(frame12)
-        entry_entryPerson.grid(column="1", row="0")
-        entry_entryDate = tk.Entry(frame12)
-        entry_entryDate.grid(column="4", row="0")
-        #항목 추가하는 부분 아직 구현안했습니다
-        #이 부분 항목 추가해서 여러명의 입력자가 있는 경우 각각 변수명 entry_entryPerson_#(#:숫자)로 설정할게요
+        cal_entryPerson = tkcalendar.DateEntry(frame12, width=12, background="#00462A",
+                                                   foreground='white', borderwidth=2,
+                                                   year=int(datetime.today().year),
+                                                   month=int(datetime.today().month),
+                                                   day=int(datetime.today().day))
 
+        lbl_entryPerson.grid(column="0", row="1")
+        entry_entryPerson.grid(column="1", row="1")
+        cal_entryPerson.grid(column="2", row="1",padx=10)
 
+        # 구분선
+        canv = tk.Canvas(self.scrollable_frame, height=10, width=1000)
+        line = canv.create_line(0, 10, 1000, 10, fill="#00462A")
+        canv.pack()
 
         # 13. 검수자
         frame13 = tk.Frame(self.scrollable_frame)
         frame13.pack(fill=tk.X, expand=True)
 
-        lbl_inspecPerson = tk.Label(frame13, text="검수자", width=10)
-        lbl_inspecPerson.grid(column="0", row="0")
-        lbl_inspecDate = tk.Label(frame13, text="검수날짜", width=10)
-        lbl_inspecDate.grid(column="3", row="0")
+        button_entryPerson = tk.Button(frame13, text="검수자 추가")
+        button_entryPerson.grid(column="0", row="0", padx=10, pady=10)
 
-        entry_inspecPerson = tk.Entry(frame13)
-        entry_inspecPerson.grid(column="1", row="0")
-        entry_inspecDate = tk.Entry(frame13)
-        entry_inspecDate.grid(column="4", row="0")
+        lbl_entryPerson = tk.Label(frame13, text="검수자%s" % (1), width=10)
+        entry_entryPerson = tk.Entry(frame13)
+        cal_entryPerson = tkcalendar.DateEntry(frame13, width=12, background="#00462A",
+                                               foreground='white', borderwidth=2,
+                                               year=int(datetime.today().year),
+                                               month=int(datetime.today().month),
+                                               day=int(datetime.today().day))
 
+        lbl_entryPerson.grid(column="0", row="1")
+        entry_entryPerson.grid(column="1", row="1")
+        cal_entryPerson.grid(column="2", row="1",padx=10)
+
+        # 구분선
+        canv = tk.Canvas(self.scrollable_frame, height=10, width=1000)
+        line = canv.create_line(0, 10, 1000, 10, fill="#00462A")
+        canv.pack()
 
         # 14. 유물
         frame14 = tk.Frame(self.scrollable_frame)
@@ -429,8 +474,39 @@ class UserPage(tk.Frame):
         lbl_relic = tk.Label(frame14, text="유물", width=10)
         lbl_relic.grid(column="0", row="4")
 
-        lbl_relic_class = tk.Label(frame14, text="분류", width =20)
+        def check():
+            global val_relic_class
+            val_relic_class = tk.StringVar()
+            if entry_state.get() == 1:
+                val_relic_class = "전세"
+            if entry_state.get() == 2:
+                val_relic_class = "출토"
+            if entry_state.get() == 3:
+                val_relic_class = "도설"
+            if entry_state.get() == 4:
+                val_relic_class = "기타"
+        entry_relic_class_val =tk.IntVar()
+
+        frame14_1 = tk.Frame(frame14)
+        lbl_relic_class = tk.Label(frame14, text="분류", width=20)
         lbl_relic_class.grid(column="1", row="1")
+
+        entry_relic_class_1 = tk.Radiobutton(frame14_1, text="전세", variable=entry_relic_class_val, value=1)
+        entry_relic_class_2 = tk.Radiobutton(frame14_1, text="출토", variable=entry_relic_class_val, value=2)
+        entry_relic_class_3 = tk.Radiobutton(frame14_1, text="도설", variable=entry_relic_class_val, value=3)
+        entry_relic_class_4 = tk.Radiobutton(frame14_1, text="기타", variable=entry_relic_class_val, value=4)
+
+        entry_relic_class_1.select()
+        entry_relic_class_2.deselect()
+        entry_relic_class_3.deselect()
+        entry_relic_class_4.deselect()
+
+        entry_relic_class_1.grid(column="0",row="0")
+        entry_relic_class_2.grid(column="1", row="0")
+        entry_relic_class_3.grid(column="2", row="0")
+        entry_relic_class_4.grid(column="3", row="0")
+        frame14_1.grid(column="2", row="1")
+
         lbl_relic_name = tk.Label(frame14, text="명칭", width=20)
         lbl_relic_name.grid(column="1", row="2")
         lbl_relic_country = tk.Label(frame14, text="국명", width=20)
@@ -448,8 +524,6 @@ class UserPage(tk.Frame):
         lbl_relic_image = tk.Label(frame14, text="이미지 첨부", width=20)
         lbl_relic_image.grid(column="1", row="9")
 
-        entry_relic_class = tk.Entry(frame14)
-        entry_relic_class.grid(column="2", row="1")
         entry_relic_name = tk.Entry(frame14)
         entry_relic_name.grid(column="2", row="2")
         entry_relic_country = tk.Entry(frame14)
@@ -466,55 +540,75 @@ class UserPage(tk.Frame):
         entry_relic_source.grid(column="2", row="8")
         entry_relic_image = tk.Entry(frame14)
         entry_relic_image.grid(column="2", row="9")
-        #이미지 첨부기능 아직 구현 안했는데 우선 변수이름만 봐주세요!
-        #여러개 첨부하면 entry_relic_image_# (#: 숫자) 이런식으로 만들겁니다
-
 
         # 15. 이미지입력자
         frame15 = tk.Frame(self.scrollable_frame)
-        frame15.pack(fill=tk.X, expand=True, pady=20)
+        frame15.pack(fill=tk.X, expand=True)
 
-        lbl_imageEntryPerson = tk.Label(frame15, text="이미지입력자", width=17)
-        lbl_imageEntryPerson.grid(column="0", row="0")
-        lbl_imageEntryDate = tk.Label(frame15, text="이미지입력자", width=17)
-        lbl_imageEntryDate.grid(column="3", row="0")
+        button_entryPerson = tk.Button(frame15, text="이미지 입력자 추가")
+        button_entryPerson.grid(column="0", row="0", padx=10, pady=10)
 
-        entry_imageEntryPerson = tk.Entry(frame15)
-        entry_imageEntryPerson.grid(column="1", row="0")
-        entry_imageEntryDate = tk.Entry(frame15)
-        entry_imageEntryDate.grid(column="4", row="0")
+        lbl_entryPerson = tk.Label(frame15, text="이미지 입력자%s" % (1), width=15)
+        entry_entryPerson = tk.Entry(frame15)
+        cal_entryPerson = tkcalendar.DateEntry(frame15, width=12, background="#00462A",
+                                               foreground='white', borderwidth=2,
+                                               year=int(datetime.today().year),
+                                               month=int(datetime.today().month),
+                                               day=int(datetime.today().day))
+
+        lbl_entryPerson.grid(column="0", row="1")
+        entry_entryPerson.grid(column="1", row="1")
+        cal_entryPerson.grid(column="2", row="1",padx=10)
 
 
         # 16. 이미지검수자
         frame16 = tk.Frame(self.scrollable_frame)
-        frame16.pack(fill=tk.X, expand=True, pady=20)
+        frame16.pack(fill=tk.X, expand=True)
 
-        lbl_imageInspecPerson = tk.Label(frame16, text="이미지검수자", width=17)
-        lbl_imageInspecPerson.grid(column="0", row="0")
-        lbl_imageInspecDate = tk.Label(frame16, text="이미지검수날짜", width=17)
-        lbl_imageInspecDate.grid(column="3", row="0")
+        button_entryPerson = tk.Button(frame16, text="이미지 검수자 추가")
+        button_entryPerson.grid(column="0", row="0", padx=10, pady=10)
 
-        entry_imageInspecPerson = tk.Entry(frame16)
-        entry_imageInspecPerson.grid(column="1", row="0")
-        entry_imageInspecDate = tk.Entry(frame16)
-        entry_imageInspecDate.grid(column="4", row="0")
+        lbl_entryPerson = tk.Label(frame16, text="이미지 검수자%s" % (1), width=15)
+        entry_entryPerson = tk.Entry(frame16)
+        cal_entryPerson = tkcalendar.DateEntry(frame16, width=12, background="#00462A",
+                                               foreground='white', borderwidth=2,
+                                               year=int(datetime.today().year),
+                                               month=int(datetime.today().month),
+                                               day=int(datetime.today().day))
 
+        lbl_entryPerson.grid(column="0", row="1")
+        entry_entryPerson.grid(column="1", row="1")
+        cal_entryPerson.grid(column="2", row="1",padx=10)
+
+        # 구분선
+        canv = tk.Canvas(self.scrollable_frame, height=10, width=1000)
+        line = canv.create_line(0, 10, 1000, 10, fill="#00462A")
+        canv.pack()
 
         # 17. 비고
         frame17 = tk.Frame(self.scrollable_frame)
         frame17.pack(fill=tk.X, pady=20)
 
+        note = tk.StringVar()
+
         lbl_note = tk.Label(frame17, text="비고", width=10)
         lbl_note.pack(side=tk.LEFT, padx=10, pady=10)
 
-        entry_note = tk.Entry(frame17)
+        entry_note = tk.Entry(frame17, textvariable=note)
         entry_note.pack(fill=tk.BOTH, padx=10, expand=True)
+
+        # 구분선
+        canv = tk.Canvas(self.scrollable_frame, height=10, width=1000)
+        line = canv.create_line(0, 10, 1000, 10, fill="#00462A")
+        canv.pack()
 
         # 저장
         frame = tk.Frame(self.scrollable_frame)
         frame.pack(side=tk.BOTTOM)
         btnSave = tk.Button(frame, text="저장", command=save_temp)
         btnSave.pack(side=tk.LEFT, padx=10, pady=10)
+
+
 
 def main():
     root = tk.Tk()
