@@ -38,6 +38,8 @@ class SampleApp(tk.Tk):
 
 class UserPage(tk.Frame):
     #멤버변수
+    val_ID = "" # 아이디
+    val_password = "" # 비밀번호
     val_state = "" #00. 상태
     val_ID = "" #0. ID(고유번호)
     val_indexKorean = "" #1. 색인어(한글)
@@ -48,6 +50,7 @@ class UserPage(tk.Frame):
     array_middleClass = [] #5. 중분류항목
     array_subClass = [] #6. 소분류항목
     val_relatedWord = "" #7. 관련어
+    val_definition ="" #7-2. 정의
     val_detail = "" #8. 상세정보
     array_referDoc = [] #10. 자료원문
     array_refer = [] #11. 출전
@@ -91,6 +94,8 @@ class UserPage(tk.Frame):
                 array_middleClass.append("제작자")
             # 7. 관련어
             val_relatedWord = relatedWord.get()
+            # 7-2. 정의
+            val_definition = definition.get()
             # 8. 상세정보
             val_detail = detail.get()
             # 17.비고
@@ -343,6 +348,19 @@ class UserPage(tk.Frame):
         entry_relatedWord.pack(side=tk.LEFT, padx=10)
 
 
+        # 7-2. 정의
+        frame7_2 = tk.Frame(self.scrollable_frame)
+        frame7_2.pack(fill=tk.X)
+
+        definition = tk.StringVar()
+
+        lbl_definition = tk.Label(frame7_2, text="정의", width=10)
+        lbl_definition.pack(side=tk.LEFT, padx=10, pady=10)
+
+        entry_definition = tk.Entry(frame7_2, textvariable=definition)
+        entry_definition.pack(side=tk.LEFT, padx=10)
+
+
         # 8. 상세정보
         frame8 = tk.Frame(self.scrollable_frame)
         frame8.pack(fill=tk.X, pady=10)
@@ -355,11 +373,13 @@ class UserPage(tk.Frame):
         entry_detail = tk.Text(frame8)
         entry_detail.pack(fill=tk.X, padx=10, expand=True)
 
+
+        #구분선
         canv = tk.Canvas(self.scrollable_frame, height=10, width=1000)
         line = canv.create_line(00, 10, 1000, 10, fill="#00462A")
         canv.pack()
 
-        # 10. 자료원문
+        # 11. 자료원문
         frame10 = tk.Frame(self.scrollable_frame)
         frame10.pack(fill=tk.X, pady=10)
 
@@ -423,8 +443,7 @@ class UserPage(tk.Frame):
         button_entryPerson = tk.Button(frame12, text="입력자 추가")
         button_entryPerson.grid(column="0",row="0",padx=10, pady=10)
 
-        #def Plus_entryPerson(self, frame12):
-        lbl_entryPerson = tk.Label(frame12, text="입력자%s" % (1), width=10)
+        lbl_entryPerson = tk.Label(frame12, text="입력자%s" % 1, width=10)
         entry_entryPerson = tk.Entry(frame12)
         cal_entryPerson = tkcalendar.DateEntry(frame12, width=12, background="#00462A",
                                                    foreground='white', borderwidth=2,

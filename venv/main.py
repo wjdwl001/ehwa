@@ -4,6 +4,7 @@ import tkinter.font
 import os
 import pymysql
 from tkinter import messagebox
+import User
 
 #color : #00462A #77E741
 
@@ -137,7 +138,9 @@ class Login(tk.Frame):
                 val = password1
                 mc.execute(sql, val)
                 if mc.rowcount:
-                    master.switch_frame(UserPage).pack()
+                    User.UserPage.val_ID = username1
+                    User.UserPage.val_password = password1
+                    master.switch_frame(User.UserPage).pack()
                 else:
                     password_not_recognised(self)
             else: user_not_found(self)
