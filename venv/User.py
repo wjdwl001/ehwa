@@ -102,13 +102,13 @@ class UserPage(tk.Frame):
             val_note = note.get()
 
 
-            mydb, mc = connect_db()
-            sql = "INSERT INTO temp(대상, 고유번호, 색인어한글, 색인어한자, 이명, 범칭, 관련어, 상세정보, 대분류) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s)"
-            val = (val_state, val_ID, val_indexKorean, val_indexChinese, val_nickname, val_generalName, val_relatedWord, val_detail, val_majorClass)
+            mydb1, mc1 = connect_db()
+            sql1 = "INSERT INTO temp(대상, 고유번호, 색인어한글, 색인어한자, 이명, 범칭, 대분류, 관련어, 정의, 상세정보, 자료원문, 출전한글, 출전한자, 출전저자, 출전저자활동시기, 출전간행시기, 출전텍스트소장처, 출처소장처번호및링크, 유물분류, 유물명칭, 유물국명, 유물시기, 유물소장처, 유물소장처번호, 유물출토지, 유물출전및출처, 비고, userID) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %d, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)"
+            val1 = (val_state, val_ID, val_indexKorean, val_indexChinese, val_nickname, val_generalName, val_majorClass, val_definition, val_relatedWord, val_detail)
 
             try:
-                mc.execute(sql, val)
-                mydb.commit()
+                mc1.execute(sql1, val1)
+                mydb1.commit()
                 messagebox.showinfo("알림", "등록 완료!")
             except:
                 messagebox.showinfo("알림", "입력에 실패했습니다!")
