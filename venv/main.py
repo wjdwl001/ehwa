@@ -140,7 +140,7 @@ class Login(tk.Frame):
                 if mc.rowcount:
                     User.UserPage.val_ID = username1
                     User.UserPage.val_password = password1
-                    master.switch_frame(User.UserPage).pack()
+                    master.switch_frame(UserMenu).pack()
                 else:
                     password_not_recognised(self)
             else: user_not_found(self)
@@ -186,7 +186,7 @@ class AdminLogin(tk.Frame):
                 val = password
                 mc.execute(sql, val)
                 if mc.rowcount:
-                    master.switch_frame(AdminPage).pack()
+                    master.switch_frame(AdminMenu).pack()
                 else :
                     password_not_recognised(self)
 
@@ -223,18 +223,29 @@ class Register(tk.Frame):
         tk.Label(self, text="").pack()
         tk.Button(self, text="뒤로가기", width = 10, height=1,
                   command=lambda: master.switch_frame(StartPage)).pack()
-#관리자 페이지
-class AdminPage(tk.Frame):
+
+class UserMenu(tk.Frame):
+    def __init__(self, master):
+        tk.Frame.__init__(self,master)
+        tk.Label(self, text="실무자 메뉴", bg="#00462A", width="300", height="3", fg="white", font=('맑은 고딕', 13)).pack()
+        tk.Label(self, text="").pack()
+
+        tk.Button(self, text="자료 입력", width=20, height=1, bg="#00462A", fg="white",
+                  command=lambda: master.switch_frame(User.UserPage)).pack()
+        tk.Button(self, text="자료 열람 및 수정", width=20, height=1, bg="#00462A", fg="white",
+                  command=lambda: master.switch_frame(User.DataPage)).pack()
+
+
+class AdminMenu(tk.Frame):
     def __init__(self, master):
         tk.Frame.__init__(self, master)
-        tk.Label(self, text="관리자 페이지", bg="#00462A", width="300", height="3", fg="white", font=('맑은 고딕', 13)).pack()
+        tk.Label(self, text="실무자 메뉴", bg="#00462A", width="300", height="3", fg="white", font=('맑은 고딕', 13)).pack()
         tk.Label(self, text="").pack()
-#실무자 페이지
-class UserPage(tk.Frame):
-    def __init__(self, master):
-        tk.Frame.__init__(self, master)
-        tk.Label(self, text="실무자 페이지", bg="#00462A", width="300", height="3", fg="white", font=('맑은 고딕', 13)).pack()
-        tk.Label(self, text="").pack()
+
+        tk.Button(self, text="자료 입력", width=20, height=1, bg="#00462A", fg="white",
+                  command=lambda: master.switch_frame(Admin.AdminPage)).pack()
+        tk.Button(self, text="자료 열람 및 수정", width=20, height=1, bg="#00462A", fg="white",
+                  command=lambda: master.switch_frame(Admin.DataPage)).pack()
 
 
 
