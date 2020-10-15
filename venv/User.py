@@ -1,5 +1,6 @@
 import tkinter as tk
 from tkinter import ttk
+from tkinter import filedialog
 import uuid
 import tkinter.font
 import os
@@ -37,28 +38,42 @@ class SampleApp(tk.Tk):
         self._frame.pack()
 
 class UserPage(tk.Frame):
-    #멤버변수
-    val_ID = "" # 아이디
-    val_password = "" # 비밀번호
-    val_state = "" #00. 상태
-    val_ID = "" #0. ID(고유번호)
-    val_indexKorean = "" #1. 색인어(한글)
-    val_indexChinese = "" #2. 색인어(한자)
-    val_nickname = "" #3. 이명
-    val_generalName = "" #4. 범칭
-    val_majorClass = "" #9. 대분류
-    array_middleClass = [] #5. 중분류항목
-    array_subClass = [] #6. 소분류항목
-    val_relatedWord = "" #7. 관련어
-    val_definition ="" #7-2. 정의
-    val_detail = "" #8. 상세정보
-    array_referDoc = [] #10. 자료원문
-    array_refer = [] #11. 출전
-    val_relic_class = ""
-    val_note = "" #17. 비고
 
 
     def __init__(self, master, *args, **kwargs):
+        # 멤버변수
+        val_ID = ""  # 아이디
+        val_password = ""  # 비밀번호
+        val_state = ""  # 00. 상태
+        val_ID = ""  # 0. ID(고유번호)
+        val_indexKorean = ""  # 1. 색인어(한글)
+        val_indexChinese = ""  # 2. 색인어(한자)
+        val_nickname = ""  # 3. 이명
+        val_generalName = ""  # 4. 범칭
+        val_majorClass = ""  # 9. 대분류
+        array_middleClass = []  # 5. 중분류항목
+        array_subClass = []  # 6. 소분류항목
+        val_relatedWord = ""  # 7. 관련어
+        val_definition = ""  # 7-2. 정의
+        val_detail = ""  # 8. 상세정보
+        ############
+        array_majorClass = []  # 9. 대분류 : ["자료1-대분류", "자료2-대분류" ,,,]
+        array_referDoc = []  # 10. 자료원문 : ["자료1-자료원문", "자료2-자료원문" ,,,]
+        array_refer = []  # 11. 출전 : [["자료1-한글", "자료1-한자", "자료1-저자", "자료1=저자활동시기" ,,,]["자료2-한글",,,],,,]
+        array_entryPerson = []  # 12-1. 입력자 : [["자료1-입력자1","자료1-입력자2",,,],["자료2-입력자1","자료2-입력자2",,,,],,,]
+        array_entryDate = []  # 12-2. 입력날짜   => 입력자와 동일
+        array_inspecPerson = []  # 13-1. 검수자  => 입력자와 동일
+        array_inspecDate = []  # 13-2. 검수날짜  => 입력자와 동일
+        ############
+        array_relic = [] #14. 유물 : [["유물1-분류", "유물1-이름",,,,],["유물2-분류", "유물2-이름",,,],,,]
+        array_imageEntryPerson = [] #15-1. 이미지입력자
+        array_imageEntryDate =[] #15-2. 이미지입력날짜
+        array_imageInspecPerson = [] #16-1. 이미지검수자
+        array_imageInspecDate = [] #16-2. 이미지 검수날짜
+        ############
+        val_note = ""  # 17. 비고
+
+        #임시저장
         def save_temp():
             if entry_state.get() == 1:
                 val_state = "대상"
@@ -98,17 +113,32 @@ class UserPage(tk.Frame):
             val_definition = definition.get()
             # 8. 상세정보
             val_detail = detail.get()
+            # 9. 대분류
+            array_majorClass.append(majorClass.get())
+            #10. 자료원문
+            array_referDoc.append(referDoc.get())
+            #11. 출전
+            array_refer_11(refer_korean.get())
+            array_refer_11(refer_chinese.get())
+            array_refer_11(refer_author.get())
+            array_refer_11(refer_authorPeriod.get())
+            array_refer_11(refer_publishPeriod.get())
+            array_refer_11(refer_institurion.get())
+            array_refer_11(refer_instInfo.get())
+            array_refer.append(array_refer_11)
+            #12. 입력자
+            #13. 검수자
             # 17.비고
             val_note = note.get()
 
 
-            mydb1, mc1 = connect_db()
-            sql1 = "INSERT INTO temp(대상, 고유번호, 색인어한글, 색인어한자, 이명, 범칭, 대분류, 관련어, 정의, 상세정보, 자료원문, 출전한글, 출전한자, 출전저자, 출전저자활동시기, 출전간행시기, 출전텍스트소장처, 출처소장처번호및링크, 유물분류, 유물명칭, 유물국명, 유물시기, 유물소장처, 유물소장처번호, 유물출토지, 유물출전및출처, 비고, userID) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %d, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)"
-            val1 = (val_state, val_ID, val_indexKorean, val_indexChinese, val_nickname, val_generalName, val_majorClass, val_definition, val_relatedWord, val_detail)
+            mydb, mc = connect_db()
+            sql = "INSERT INTO temp(대상, 고유번호, 색인어한글, 색인어한자, 이명, 범칭, 관련어, 상세정보, 대분류) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s)"
+            val = (val_state, val_ID, val_indexKorean, val_indexChinese, val_nickname, val_generalName, val_relatedWord, val_detail, val_majorClass)
 
             try:
-                mc1.execute(sql1, val1)
-                mydb1.commit()
+                mc.execute(sql, val)
+                mydb.commit()
                 messagebox.showinfo("알림", "등록 완료!")
             except:
                 messagebox.showinfo("알림", "입력에 실패했습니다!")
@@ -117,7 +147,7 @@ class UserPage(tk.Frame):
         #스크롤바
         super().__init__(master, *args, **kwargs)
         canvas = tk.Canvas(self, width=980, height=800)
-        scrollbar = ttk.Scrollbar(self, orient="vertical", command=canvas.yview)
+        scrollbar = tkinter.Scrollbar(self, orient="vertical", command=canvas.yview)
         self.scrollable_frame = tk.Frame(canvas)
 
         self.scrollable_frame.bind(
@@ -148,18 +178,6 @@ class UserPage(tk.Frame):
         frame00 = tk.Frame(self.scrollable_frame)
         frame00.pack(fill=tk.X)
 
-        def check():
-            global val_state
-            val_state = tk.StringVar()
-            if entry_state.get() == 1:
-                val_state = "대상"
-            if entry_state.get() == 2:
-                val_state = "비대상"
-            if entry_state.get() == 3:
-                val_state = "보류"
-            if entry_state.get() == 4:
-                val_state = "삭제"
-
         entry_state = tk.IntVar()
 
         entry_state_subject = tk.Radiobutton(frame00, text="대상", variable=entry_state, value=1)
@@ -176,7 +194,6 @@ class UserPage(tk.Frame):
         entry_state_defer.pack(side=tk.RIGHT, padx=10)
         entry_state_nonsubject.pack(side=tk.RIGHT, padx=10)
         entry_state_subject.pack(side=tk.RIGHT, padx=10)
-        action = tk.Button(frame00, text="확인", command=check)
 
 
         # 구분선
@@ -188,7 +205,6 @@ class UserPage(tk.Frame):
         frame0 = tk.Frame(self.scrollable_frame)
         frame0.pack(fill=tk.X)
 
-        global val_ID
         val_ID = tk.StringVar()
         ID = uuid.uuid1()
         val_ID = ID.hex[0:9] #랜덤한 고유번호 16진수로 10자리로 만들었습니다
@@ -250,20 +266,6 @@ class UserPage(tk.Frame):
 
         entry_generalName = tk.Entry(frame4, textvariable=generalName)
         entry_generalName.pack(side=tk.LEFT, padx=10)
-
-
-        # 9. 대분류
-        frame9 = tk.Frame(self.scrollable_frame)
-        frame9.pack(fill=tk.X)
-
-        values_detail = ["의궤", "실록", "승정원일기", "일성록", "전례서", "법전", "지리지", "등록", "발기", "유서류", "문집", "일기", "기타"]
-        majorClass = tk.StringVar()
-
-        lbl_majorClass = tk.Label(frame9, text="대분류\n자료 유형별", width=10)
-        lbl_majorClass.pack(side=tk.LEFT, padx=10, pady=10)
-
-        drBox_majorClass = tk.ttk.Combobox(frame9, height=15, values=values_detail, textvariable=majorClass ,state="readonly")
-        drBox_majorClass.pack(side=tk.LEFT, pady=10, padx=10, expand=False)
 
 
         # 5. 중분류항목
@@ -379,229 +381,265 @@ class UserPage(tk.Frame):
         line = canv.create_line(00, 10, 1000, 10, fill="#00462A")
         canv.pack()
 
-        # 11. 자료원문
-        frame10 = tk.Frame(self.scrollable_frame)
-        frame10.pack(fill=tk.X, pady=10)
 
-        referDoc = tk.StringVar()
 
-        lbl_referDoc = tk.Label(frame10, text="자료원문", width=10)
-        lbl_referDoc.pack(side=tk.LEFT, padx=10, pady=30)
+        #자주색 부분-자료추가
+        def AddFrame9():
+            def Add_entryPerson():
+                global num_entryPerson
+                frame9_extra_12_extra = tk.Frame(frame9_extra_12)
+                frame9_extra_12_extra.pack(fill=tk.X, padx=10)
+                entryPerson = tk.StringVar()
+                array_entryPerson_info = []
+                array_entryPerson_info.append(entryPerson)
+                lbl_entryPerson = tk.Label(frame9_extra_12, text="입력자", width=10).pack(side=tk.LEFT,padx=10)
+                entry_entryPerson = tk.Entry(frame9_extra_12, textvariable = entryPerson).pack(side=tk.LEFT,padx=10)
+                cal_entryPerson = tkcalendar.DateEntry(frame9_extra_12, width=12, background="#00462A",
+                                                       foreground='white', borderwidth=2,
+                                                       year=int(datetime.today().year),
+                                                       month=int(datetime.today().month),
+                                                       day=int(datetime.today().day)).pack(side=tk.LEFT, padx=10)
+                entryDate = datetime.today().strftime("%Y%m%d")
+                array_entryDate_info = []
+                array_entryDate_info.append(entryDate)
+                array_entryPerson.append(array_entryPerson_info)
+                array_entryDate.append(array_entryDate_info)
 
-        entry_referDoc = tk.Entry(frame10)
-        entry_referDoc.pack(fill=tk.BOTH, padx=10, expand=True)
+            def Add_inspecPerson():
+                frame9_extra_13_extra = tk.Frame(frame9_extra_13)
+                frame9_extra_13_extra.pack(fill=tk.X, padx=10)
+                inspecPerson = tk.StringVar()
+                array_inspecPerson_info = []
+                array_inspecPerson_info.append(inspecPerson)
+                lbl_inspecPerson = tk.Label(frame9_extra_13, text="검수자", width=10).pack(side=tk.LEFT,padx=10)
+                entry_inspecPerson = tk.Entry(frame9_extra_13, textvariable = inspecPerson).pack(side=tk.LEFT,padx=10)
+                cal_inspecPerson = tkcalendar.DateEntry(frame9_extra_13, width=12, background="#00462A",
+                                                        foreground='white', borderwidth=2,
+                                                        year=int(datetime.today().year),
+                                                        month=int(datetime.today().month),
+                                                        day=int(datetime.today().day)).pack(side=tk.LEFT, padx=10)
+                inspecDate = datetime.today().strftime("%Y%m%d")
+                array_inspecDate_info = []
+                array_inspecDate_info.append(inspecDate)
+                array_inspecPerson.append(array_inspecPerson_info)
+                array_inspecDate.append(array_inspecDate_info)
 
+
+
+            frame9_extra = tk.Frame(frame9)
+            frame9_extra.pack(fill=tk.X)
+            #9. 대분류
+            frame9_extra_9 = tk.Frame(frame9_extra)
+            frame9_extra_9.pack(fill=tk.X, padx=10)
+            majorClass = tk.StringVar()
+            values_detail = ["의궤", "실록", "승정원일기", "일성록", "전례서", "법전", "지리지", "등록", "발기", "유서류", "문집", "일기", "기타"]
+            lbl_majorClass = tk.Label(frame9_extra_9, textvariable=majorClass,text="대분류\n자료 유형별", width=10,padx=10)
+            lbl_majorClass.pack(side=tk.LEFT, padx=10)
+            drBox_majorClass = tk.ttk.Combobox(frame9_extra_9, height=15, values=values_detail,state="readonly")
+            drBox_majorClass.current(0)
+            drBox_majorClass.pack(side=tk.LEFT, pady=10, padx=10, expand=False)
+            #10. 자료원문
+            frame9_extra_10 = tk.Frame(frame9_extra)
+            frame9_extra_10.pack(fill=tk.X, padx=10)
+            referDoc = tk.StringVar()
+            lbl_referDoc = tk.Label(frame9_extra_10, textvariable=referDoc, text="자료원문", width=10)
+            lbl_referDoc.pack(side=tk.LEFT, padx=10, pady=10)
+            entry_referDoc = tk.Text(frame9_extra_10)
+            entry_referDoc.pack(fill=tk.X, padx=10, expand=True)
+            #11. 출전
+            frame9_extra_11 = tk.Frame(frame9_extra)
+            frame9_extra_11.pack(fill=tk.X, padx=10)
+            refer_korean = tk.StringVar()
+            refer_chinese = tk.StringVar()
+            refer_author = tk.StringVar()
+            refer_authorPeriod = tk.StringVar()
+            refer_publishPeriod = tk.StringVar()
+            refer_institution = tk.StringVar()
+            refer_instInfo = tk.StringVar()
+            array_refer_info = []
+            array_refer_info.append(refer_korean)
+            array_refer_info.append(refer_chinese)
+            array_refer_info.append(refer_author)
+            array_refer_info.append(refer_authorPeriod)
+            array_refer_info.append(refer_authorPeriod)
+            array_refer_info.append(refer_institution)
+            array_refer_info.append(refer_instInfo)
+            empty = tk.Label(frame9_extra_11, text="", width=10)
+            empty.grid(column="0", pady=5)
+            lbl_refer = tk.Label(frame9_extra_11, text="출전", width=10).grid(column="0", row="4")
+            lbl_refer_korean = tk.Label(frame9_extra_11, text="한글", width=20).grid(column="1", row="1")
+            lbl_refer_chinese = tk.Label(frame9_extra_11, text="한자", width=20).grid(column="1", row="2")
+            lbl_refer_author = tk.Label(frame9_extra_11, text="저자", width=20).grid(column="1", row="3")
+            lbl_refer_authorPeriod = tk.Label(frame9_extra_11, text="저자활동시기", width=20).grid(column="1", row="4")
+            lbl_refer_publishPeriod = tk.Label(frame9_extra_11, text="간행시기", width=20).grid(column="1", row="5")
+            lbl_refer_institution = tk.Label(frame9_extra_11, text="텍스트소장처", width=20).grid(column="1", row="6")
+            lbl_refer_instiInfo = tk.Label(frame9_extra_11, text="소장처번호/링크", width=20).grid(column="1", row="7")
+            entry_refer_korean = tk.Entry(frame9_extra_11,textvariable=refer_korean).grid(column="2", row="1")
+            entry_refer_chinese = tk.Entry(frame9_extra_11,textvariable=refer_chinese).grid(column="2", row="2")
+            entry_refer_author = tk.Entry(frame9_extra_11,textvariable=refer_author).grid(column="2", row="3")
+            entry_refer_authorPeriod = tk.Entry(frame9_extra_11,textvariable=refer_authorPeriod).grid(column="2", row="4")
+            entry_refer_publishPeriod = tk.Entry(frame9_extra_11,textvariable=refer_publishPeriod).grid(column="2", row="5")
+            entry_refer_institution = tk.Entry(frame9_extra_11,textvariable=refer_institution).grid(column="2", row="6")
+            entry_refer_instInfo = tk.Entry(frame9_extra_11,textvariable=refer_instInfo).grid(column="2", row="7")
+            tk.Label(frame9_extra_11).grid()
+            #12. 입력자
+            frame9_extra_12 = tk.Frame(frame9_extra)
+            frame9_extra_12.pack(fill=tk.X, padx=10)
+            button_entryPerson = tk.Button(frame9_extra_12, text="입력자 추가", command=Add_entryPerson)
+            button_entryPerson.pack(side=tk.TOP, anchor=tk.W, padx=10, pady=10)
+            #13. 검수자
+            frame9_extra_13 = tk.Frame(frame9_extra)
+            frame9_extra_13.pack(fill=tk.X, padx=10)
+            button_entryPerson = tk.Button(frame9_extra_13, text="검수자 추가", command=Add_inspecPerson)
+            button_entryPerson.pack(side=tk.TOP, anchor=tk.W, padx=10, pady=10)
+
+
+            array_majorClass.append(majorClass)
+            array_referDoc.append(referDoc)
+            array_refer.append(array_refer_info)
+
+
+        # 9. 대분류
+        # 10. 자료원문
         # 11. 출전
-        frame11 = tk.Frame(self.scrollable_frame)
-        frame11.pack(fill=tk.X)
+        # 12. 입력자
+        # 13. 검수자
 
-        empty = tk.Label(frame11, text="", width=10)
-        empty.grid(column="0", pady=5)
-        lbl_refer = tk.Label(frame11, text="출전", width=10)
-        lbl_refer.grid(column="0", row="4")
+        #자료추가
+        frame9 = tk.Frame(self.scrollable_frame)
+        frame9.pack(fill=tk.X, expand=True)
+        tk.Button(frame9,text="자료 추가",command=AddFrame9).pack(side=tk.TOP, anchor=tk.W,padx=10,pady=10)
 
-        lbl_refer_korean = tk.Label(frame11, text="한글", width =20)
-        lbl_refer_korean.grid(column="1", row="1")
-        lbl_refer_chinese = tk.Label(frame11, text="한자", width=20)
-        lbl_refer_chinese.grid(column="1", row="2")
-        lbl_refer_author = tk.Label(frame11, text="저자", width=20)
-        lbl_refer_author.grid(column="1", row="3")
-        lbl_refer_authorPeriod = tk.Label(frame11, text="저자활동시기", width=20)
-        lbl_refer_authorPeriod.grid(column="1", row="4")
-        lbl_refer_publishPeriod = tk.Label(frame11, text="간행시기", width=20)
-        lbl_refer_publishPeriod.grid(column="1", row="5")
-        lbl_refer_institution = tk.Label(frame11, text="텍스트소장처", width=20)
-        lbl_refer_institution.grid(column="1", row="6")
-        lbl_refer_instiInfo = tk.Label(frame11, text="소장처번호/링크", width=20)
-        lbl_refer_instiInfo.grid(column="1", row="7")
+        # 구분선
+        canv = tk.Canvas(self.scrollable_frame, height=10, width=1000)
+        line = canv.create_line(0, 10, 1000, 10, fill="#00462A")
+        canv.pack()
 
-        entry_refer_korean = tk.Entry(frame11)
-        entry_refer_korean.grid(column="2", row="1")
-        entry_refer_chinese = tk.Entry(frame11)
-        entry_refer_chinese.grid(column="2", row="2")
-        entry_refer_author = tk.Entry(frame11)
-        entry_refer_author.grid(column="2", row="3")
-        entry_refer_authorPeriod = tk.Entry(frame11)
-        entry_refer_authorPeriod.grid(column="2", row="4")
-        entry_refer_publishPeriod = tk.Entry(frame11)
-        entry_refer_publishPeriod.grid(column="2", row="5")
-        entry_refer_institution = tk.Entry(frame11)
-        entry_refer_institution.grid(column="2", row="6")
-        entry_refer_instInfo = tk.Entry(frame11)
-        entry_refer_instInfo.grid(column="2", row="7")
-        tk.Label(frame11).grid()
+        #하늘색부분-유물추가
+        def AddFrame14():
+            def Add_imagePerson():
+                frame14_extra_15_extra = tk.Frame(frame14_extra_15)
+                frame14_extra_15_extra.pack(fill=tk.X, side=tk.TOP,anchor=tk.W, padx=10)
+                imageEntryPerson = tk.StringVar()
+                array_imageEntryPerson_info = []
+                array_imageEntryPerson_info.append(imageEntryPerson)
+                lbl_imageEntryPerson = tk.Label(frame14_extra_15, text="입력자%s", width=10).pack(side=tk.LEFT, padx=10)
+                entry_imageEntryPerson = tk.Entry(frame14_extra_15).pack(side=tk.LEFT, padx=10)
+                cal_imageEntryPerson = tkcalendar.DateEntry(frame14_extra_15, width=12, background="#00462A",
+                                                       foreground='white', borderwidth=2,
+                                                       year=int(datetime.today().year),
+                                                       month=int(datetime.today().month),
+                                                       day=int(datetime.today().day)).pack(side=tk.LEFT, padx=10)
+                imageEntryDate = datetime.today().strftime("%Y%m%d")
+                array_imageEntryDate_info = []
+                array_imageEntryDate_info.append(imageEntryDate)
+                array_imageEntryPerson.append(array_imageEntryPerson_info)
+                array_imageEntryDate.append(array_imageEntryDate_info)
+
+
+            def Add_imageInspecPerson():
+                frame14_extra_16_extra = tk.Frame(frame14_extra_16)
+                frame14_extra_16_extra.pack(fill=tk.X, padx=10)
+                imageInspecPerson = tk.StringVar()
+                array_imageInspecPerson_info = []
+                array_imageInspecPerson_info.append(imageInspecPerson)
+                lbl_entryPerson = tk.Label(frame14_extra_16, text="검수자%s", width=10).pack(side=tk.LEFT, padx=10)
+                entry_entryPerson = tk.Entry(frame14_extra_16).pack(side=tk.LEFT, padx=10)
+                cal_entryPerson = tkcalendar.DateEntry(frame14_extra_16, width=12, background="#00462A",
+                                                       foreground='white', borderwidth=2,
+                                                       year=int(datetime.today().year),
+                                                       month=int(datetime.today().month),
+                                                       day=int(datetime.today().day)).pack(side=tk.LEFT, padx=10)
+                imageInspecDate = datetime.today().strftime("%Y%m%d")
+                array_imageInspecDate_info = []
+                array_imageInspecDate_info.append(imageInspecDate)
+                array_imageInspecPerson.append(array_imageInspecPerson_info)
+                array_imageInspecDate.append(array_imageInspecDate_info)
+
+            def Browser_relic_image():
+                filename = filedialog.askopenfilename()
+
+            frame14_extra = tk.Frame(frame14)
+            frame14_extra.pack(fill=tk.X)
+            #14. 유물
+            #14-1. 유물-분류
+            frame14_extra_14 = tk.Frame(frame14_extra)
+            frame14_extra_14.pack(fill=tk.X, padx=10)
+            lbl_relic=tk.Label(frame14_extra_14, text="유물", width=10).grid(column="0",row="4")
+            lbl_relic_class = tk.Label(frame14_extra_14, text="분류", width=20).grid(column="1", row="1")
+            frame_14_extra_14_frame = tk.Frame(frame14_extra_14).grid(column="2",row="1")
+            entry_relic_class = tk.IntVar()
+            entry_relic_class_1 = tk.Radiobutton(frame_14_extra_14_frame, text="전세", variable=entry_relic_class, value=1).pack(side=tk.LEFT)
+            entry_relic_class_2 = tk.Radiobutton(frame_14_extra_14_frame, text="출토", variable=entry_relic_class,value=2).pack(side=tk.LEFT)
+            entry_relic_class_3 = tk.Radiobutton(frame_14_extra_14_frame, text="도설", variable=entry_relic_class,value=3).pack(side=tk.LEFT)
+            entry_relic_class_4 = tk.Radiobutton(frame_14_extra_14_frame, text="기타", variable=entry_relic_class,value=4).pack(side=tk.LEFT)
+            val_relic_class = ""
+            if entry_relic_class.get() == 1:
+                val_relic_class = "전세"
+            if entry_relic_class.get() == 2:
+                val_relic_class = "출토"
+            if entry_relic_class.get() == 3:
+                val_relic_class = "도설"
+            if entry_relic_class.get() == 4:
+                val_relic_class = "기타"
+            array_relic_info = []
+            array_relic_info.append(val_relic_class)
+            #14-2~8
+            relic_name = tk.StringVar()
+            relic_country = tk.StringVar()
+            relic_period = tk.StringVar()
+            relic_site = tk.StringVar()
+            relic_sitePhone = tk.StringVar()
+            relic_findSpot = tk.StringVar()
+            relic_source = tk.StringVar()
+            array_relic_info.append(relic_name)
+            array_relic_info.append(relic_country)
+            array_relic_info.append(relic_period)
+            array_relic_info.append(relic_site)
+            array_relic_info.append(relic_sitePhone)
+            array_relic_info.append(relic_findSpot)
+            array_relic_info.append(relic_source)
+            lbl_relic_name = tk.Label(frame14_extra_14, text="명칭", width=20).grid(column="1", row="2")
+            lbl_relic_country = tk.Label(frame14_extra_14, text="국명", width=20).grid(column="1", row="3")
+            lbl_relic_period = tk.Label(frame14_extra_14, text="시기", width=20).grid(column="1", row="4")
+            lbl_relic_site = tk.Label(frame14_extra_14, text="소장처", width=20).grid(column="1", row="5")
+            lbl_relic_sitePhone = tk.Label(frame14_extra_14, text="소장처번호", width=20).grid(column="1", row="6")
+            lbl_relic_findSpot = tk.Label(frame14_extra_14, text="출토지", width=20).grid(column="1", row="7")
+            lbl_relic_source = tk.Label(frame14_extra_14, text="출전/출처", width=20).grid(column="1", row="8")
+            lbl_relic_image = tk.Label(frame14_extra_14, text="이미지 첨부", width=20).grid(column="1", row="9")
+            entry_relic_name = tk.Entry(frame14_extra_14, textvariable=relic_name).grid(column="2", row="2")
+            entry_relic_country = tk.Entry(frame14_extra_14, textvariable=relic_country).grid(column="2", row="3")
+            entry_relic_period = tk.Entry(frame14_extra_14, textvariable=relic_period).grid(column="2", row="4")
+            entry_relic_site = tk.Entry(frame14_extra_14, textvariable=relic_site).grid(column="2", row="5")
+            entry_relic_sitePhone = tk.Entry(frame14_extra_14, textvariable=relic_sitePhone).grid(column="2", row="6")
+            entry_relic_findSpot = tk.Entry(frame14_extra_14, textvariable=relic_findSpot).grid(column="2", row="7")
+            entry_relic_source = tk.Entry(frame14_extra_14, textvariable=relic_source).grid(column="2", row="8")
+            entry_relic_image = tk.Button(frame14_extra_14, text="첨부파일", command=Browser_relic_image).grid(column="2", row="9")
+            #15. 이미지입력자
+            frame14_extra_15 = tk.Frame(frame14_extra)
+            frame14_extra_15.pack(fill=tk.X, padx=10)
+            button_entryPerson = tk.Button(frame14_extra_15, text="입력자 추가", command=Add_imagePerson)
+            button_entryPerson.pack(side=tk.TOP, anchor=tk.W, padx=10, pady=10)
+            #16. 이미지검수자
+            frame14_extra_16 = tk.Frame(frame14_extra)
+            frame14_extra_16.pack(fill=tk.X, padx=10)
+            button_entryPerson = tk.Button(frame14_extra_16, text="검수자 추가", command=Add_imageInspecPerson)
+            button_entryPerson.pack(side=tk.TOP, anchor=tk.W, padx=10, pady=10)
+
+            array_relic.append(array_relic_info)
+
+        # 유물추가
+        frame14 = tk.Frame(self.scrollable_frame)
+        frame14.pack(fill=tk.X)
+        tk.Button(frame14, text="유물 추가", command=AddFrame14).pack(side=tk.TOP, anchor=tk.W, padx=10, pady=10)
+
+        #14. 유물
+        #15. 이미지입력자
+        #16. 이미지검수자
 
         #구분선
         canv = tk.Canvas(self.scrollable_frame, height=10, width=1000)
-        line = canv.create_line(0, 10, 1000, 10, fill="#00462A")
-        canv.pack()
-
-        # 12. 입력자
-        frame12 = tk.Frame(self.scrollable_frame)
-        frame12.pack(fill=tk.X,expand=True)
-
-        button_entryPerson = tk.Button(frame12, text="입력자 추가")
-        button_entryPerson.grid(column="0",row="0",padx=10, pady=10)
-
-        lbl_entryPerson = tk.Label(frame12, text="입력자%s" % 1, width=10)
-        entry_entryPerson = tk.Entry(frame12)
-        cal_entryPerson = tkcalendar.DateEntry(frame12, width=12, background="#00462A",
-                                                   foreground='white', borderwidth=2,
-                                                   year=int(datetime.today().year),
-                                                   month=int(datetime.today().month),
-                                                   day=int(datetime.today().day))
-
-        lbl_entryPerson.grid(column="0", row="1")
-        entry_entryPerson.grid(column="1", row="1")
-        cal_entryPerson.grid(column="2", row="1",padx=10)
-
-        # 구분선
-        canv = tk.Canvas(self.scrollable_frame, height=10, width=1000)
-        line = canv.create_line(0, 10, 1000, 10, fill="#00462A")
-        canv.pack()
-
-        # 13. 검수자
-        frame13 = tk.Frame(self.scrollable_frame)
-        frame13.pack(fill=tk.X, expand=True)
-
-        button_entryPerson = tk.Button(frame13, text="검수자 추가")
-        button_entryPerson.grid(column="0", row="0", padx=10, pady=10)
-
-        lbl_entryPerson = tk.Label(frame13, text="검수자%s" % (1), width=10)
-        entry_entryPerson = tk.Entry(frame13)
-        cal_entryPerson = tkcalendar.DateEntry(frame13, width=12, background="#00462A",
-                                               foreground='white', borderwidth=2,
-                                               year=int(datetime.today().year),
-                                               month=int(datetime.today().month),
-                                               day=int(datetime.today().day))
-
-        lbl_entryPerson.grid(column="0", row="1")
-        entry_entryPerson.grid(column="1", row="1")
-        cal_entryPerson.grid(column="2", row="1",padx=10)
-
-        # 구분선
-        canv = tk.Canvas(self.scrollable_frame, height=10, width=1000)
-        line = canv.create_line(0, 10, 1000, 10, fill="#00462A")
-        canv.pack()
-
-        # 14. 유물
-        frame14 = tk.Frame(self.scrollable_frame)
-        frame14.pack(fill=tk.X)
-
-        empty = tk.Label(frame14, text="", width=10)
-        empty.grid(column="0", pady=5)
-        lbl_relic = tk.Label(frame14, text="유물", width=10)
-        lbl_relic.grid(column="0", row="4")
-
-        def check():
-            global val_relic_class
-            val_relic_class = tk.StringVar()
-            if entry_state.get() == 1:
-                val_relic_class = "전세"
-            if entry_state.get() == 2:
-                val_relic_class = "출토"
-            if entry_state.get() == 3:
-                val_relic_class = "도설"
-            if entry_state.get() == 4:
-                val_relic_class = "기타"
-        entry_relic_class_val =tk.IntVar()
-
-        frame14_1 = tk.Frame(frame14)
-        lbl_relic_class = tk.Label(frame14, text="분류", width=20)
-        lbl_relic_class.grid(column="1", row="1")
-
-        entry_relic_class_1 = tk.Radiobutton(frame14_1, text="전세", variable=entry_relic_class_val, value=1)
-        entry_relic_class_2 = tk.Radiobutton(frame14_1, text="출토", variable=entry_relic_class_val, value=2)
-        entry_relic_class_3 = tk.Radiobutton(frame14_1, text="도설", variable=entry_relic_class_val, value=3)
-        entry_relic_class_4 = tk.Radiobutton(frame14_1, text="기타", variable=entry_relic_class_val, value=4)
-
-        entry_relic_class_1.select()
-        entry_relic_class_2.deselect()
-        entry_relic_class_3.deselect()
-        entry_relic_class_4.deselect()
-
-        entry_relic_class_1.grid(column="0",row="0")
-        entry_relic_class_2.grid(column="1", row="0")
-        entry_relic_class_3.grid(column="2", row="0")
-        entry_relic_class_4.grid(column="3", row="0")
-        frame14_1.grid(column="2", row="1")
-
-        lbl_relic_name = tk.Label(frame14, text="명칭", width=20)
-        lbl_relic_name.grid(column="1", row="2")
-        lbl_relic_country = tk.Label(frame14, text="국명", width=20)
-        lbl_relic_country.grid(column="1", row="3")
-        lbl_relic_period = tk.Label(frame14, text="시기", width=20)
-        lbl_relic_period.grid(column="1", row="4")
-        lbl_relic_site = tk.Label(frame14, text="소장처", width=20)
-        lbl_relic_site.grid(column="1", row="5")
-        lbl_relic_sitePhone = tk.Label(frame14, text="소장처번호", width=20)
-        lbl_relic_sitePhone.grid(column="1", row="6")
-        lbl_relic_findSpot = tk.Label(frame14, text="출토지", width=20)
-        lbl_relic_findSpot.grid(column="1", row="7")
-        lbl_relic_source = tk.Label(frame14, text="출전/출처", width=20)
-        lbl_relic_source.grid(column="1", row="8")
-        lbl_relic_image = tk.Label(frame14, text="이미지 첨부", width=20)
-        lbl_relic_image.grid(column="1", row="9")
-
-        entry_relic_name = tk.Entry(frame14)
-        entry_relic_name.grid(column="2", row="2")
-        entry_relic_country = tk.Entry(frame14)
-        entry_relic_country.grid(column="2", row="3")
-        entry_relic_period = tk.Entry(frame14)
-        entry_relic_period.grid(column="2", row="4")
-        entry_relic_site = tk.Entry(frame14)
-        entry_relic_site.grid(column="2", row="5")
-        entry_relic_sitePhone = tk.Entry(frame14)
-        entry_relic_sitePhone.grid(column="2", row="6")
-        entry_relic_findSpot = tk.Entry(frame14)
-        entry_relic_findSpot.grid(column="2", row="7")
-        entry_relic_source = tk.Entry(frame14)
-        entry_relic_source.grid(column="2", row="8")
-        entry_relic_image = tk.Entry(frame14)
-        entry_relic_image.grid(column="2", row="9")
-
-        # 15. 이미지입력자
-        frame15 = tk.Frame(self.scrollable_frame)
-        frame15.pack(fill=tk.X, expand=True)
-
-        button_entryPerson = tk.Button(frame15, text="이미지 입력자 추가")
-        button_entryPerson.grid(column="0", row="0", padx=10, pady=10)
-
-        lbl_entryPerson = tk.Label(frame15, text="이미지 입력자%s" % (1), width=15)
-        entry_entryPerson = tk.Entry(frame15)
-        cal_entryPerson = tkcalendar.DateEntry(frame15, width=12, background="#00462A",
-                                               foreground='white', borderwidth=2,
-                                               year=int(datetime.today().year),
-                                               month=int(datetime.today().month),
-                                               day=int(datetime.today().day))
-
-        lbl_entryPerson.grid(column="0", row="1")
-        entry_entryPerson.grid(column="1", row="1")
-        cal_entryPerson.grid(column="2", row="1",padx=10)
-
-
-        # 16. 이미지검수자
-        frame16 = tk.Frame(self.scrollable_frame)
-        frame16.pack(fill=tk.X, expand=True)
-
-        button_entryPerson = tk.Button(frame16, text="이미지 검수자 추가")
-        button_entryPerson.grid(column="0", row="0", padx=10, pady=10)
-
-        lbl_entryPerson = tk.Label(frame16, text="이미지 검수자%s" % (1), width=15)
-        entry_entryPerson = tk.Entry(frame16)
-        cal_entryPerson = tkcalendar.DateEntry(frame16, width=12, background="#00462A",
-                                               foreground='white', borderwidth=2,
-                                               year=int(datetime.today().year),
-                                               month=int(datetime.today().month),
-                                               day=int(datetime.today().day))
-
-        lbl_entryPerson.grid(column="0", row="1")
-        entry_entryPerson.grid(column="1", row="1")
-        cal_entryPerson.grid(column="2", row="1",padx=10)
-
-        # 구분선
-        canv = tk.Canvas(self.scrollable_frame, height=10, width=1000)
-        line = canv.create_line(0, 10, 1000, 10, fill="#00462A")
+        line = canv.create_line(00, 10, 1000, 10, fill="#00462A")
         canv.pack()
 
         # 17. 비고
