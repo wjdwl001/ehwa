@@ -38,11 +38,9 @@ class SampleApp(tk.Tk):
         self._frame.pack()
 
 class UserPage(tk.Frame):
-
-
     def __init__(self, master, *args, **kwargs):
         # 멤버변수
-        val_ID = ""  # 아이디
+        val_username = ""  # 아이디
         val_password = ""  # 비밀번호
         val_state = ""  # 00. 상태
         val_ID = ""  # 0. ID(고유번호)
@@ -72,6 +70,10 @@ class UserPage(tk.Frame):
         array_imageInspecDate = [] #16-2. 이미지 검수날짜
         ############
         val_note = ""  # 17. 비고
+
+
+        def save():
+            return
 
         #임시저장
         def save_temp():
@@ -173,6 +175,11 @@ class UserPage(tk.Frame):
         tk.Label(self.scrollable_frame, text="이화여자대학교 물질문화연구팀\n조선시대공예 DB입력기 #1", bg="#00462A", width="100", height="3", fg="white",
                  font=('맑은 고딕', 13)).pack()
         tk.Label(self.scrollable_frame, text="").pack()
+
+
+        #임시저장버튼
+        btnTempSave = tk.Button(master, text="임시저장", command=save_temp)
+        btnTempSave.place(x=900,y=650)
 
         # 00. 상태
         frame00 = tk.Frame(self.scrollable_frame)
