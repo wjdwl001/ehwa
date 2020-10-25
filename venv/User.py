@@ -26,7 +26,7 @@ class SampleApp(tk.Tk):
     def __init__(self):
         tk.Tk.__init__(self)
         self._frame = None
-        self.switch_frame(StartPage)
+        self.switch_frame(UserPage)
         self.resizable(False,False)
         self.title("조선시대공예 DB입력기")
 
@@ -55,9 +55,7 @@ class UserPage(tk.Frame):
         val_definition = ""  # 7-2. 정의
         val_detail = ""  # 8. 상세정보
         ############
-        array_majorClass = []  # 9. 대분류 : ["자료1-대분류", "자료2-대분류" ,,,]
-        array_referDoc = []  # 10. 자료원문 : ["자료1-자료원문", "자료2-자료원문" ,,,]
-        array_refer = []  # 11. 출전 : [["자료1-한글", "자료1-한자", "자료1-저자", "자료1=저자활동시기" ,,,]["자료2-한글",,,],,,]
+        array_refer = []  # 9-11. 출전 : [["자료1-대분류", "자료1-자료원문", "자료1-한글", "자료1-한자", "자료1-저자", "자료1=저자활동시기" ,,,]["자료2-한글",,,],,,]
         array_entryPerson = []  # 12-1. 입력자 : [["자료1-입력자1","자료1-입력자2",,,],["자료2-입력자1","자료2-입력자2",,,,],,,]
         array_entryDate = []  # 12-2. 입력날짜   => 입력자와 동일
         array_inspecPerson = []  # 13-1. 검수자  => 입력자와 동일
@@ -100,9 +98,9 @@ class UserPage(tk.Frame):
             if entry_middleClass_producer.get():
                 array_middleClass.append("제작자")
             # 6. 소분류항목
-            if entry_subClass_metal.get():
+            if entry_middleClass_tool.get():
                 array_subClass.append("금속")
-            if entry_subClass_wood.get():
+            if entry_middleClass_tool.get():
                 array_subClass.append("목재")
             if entry_middleClass_tool.get():
                 array_middleClass.append("제작도구")
@@ -114,21 +112,6 @@ class UserPage(tk.Frame):
             val_definition = definition.get()
             # 8. 상세정보
             val_detail = detail.get()
-            # 9. 대분류
-            array_majorClass.append(majorClass.get())
-            #10. 자료원문
-            array_referDoc.append(referDoc.get())
-            #11. 출전
-            array_refer_11(refer_korean.get())
-            array_refer_11(refer_chinese.get())
-            array_refer_11(refer_author.get())
-            array_refer_11(refer_authorPeriod.get())
-            array_refer_11(refer_publishPeriod.get())
-            array_refer_11(refer_institurion.get())
-            array_refer_11(refer_instInfo.get())
-            array_refer.append(array_refer_11)
-            #12. 입력자
-            #13. 검수자
             # 17.비고
             val_note = note.get()
 
@@ -462,14 +445,6 @@ class UserPage(tk.Frame):
             refer_publishPeriod = tk.StringVar()
             refer_institution = tk.StringVar()
             refer_instInfo = tk.StringVar()
-            array_refer_info = []
-            array_refer_info.append(refer_korean)
-            array_refer_info.append(refer_chinese)
-            array_refer_info.append(refer_author)
-            array_refer_info.append(refer_authorPeriod)
-            array_refer_info.append(refer_authorPeriod)
-            array_refer_info.append(refer_institution)
-            array_refer_info.append(refer_instInfo)
             empty = tk.Label(frame9_extra_11, text="", width=10)
             empty.grid(column="0", pady=5)
             lbl_refer = tk.Label(frame9_extra_11, text="출전", width=10).grid(column="0", row="4")
@@ -499,9 +474,16 @@ class UserPage(tk.Frame):
             button_entryPerson = tk.Button(frame9_extra_13, text="검수자 추가", command=Add_inspecPerson)
             button_entryPerson.pack(side=tk.TOP, anchor=tk.W, padx=10, pady=10)
 
-
-            array_majorClass.append(majorClass)
-            array_referDoc.append(referDoc)
+            array_refer_info = [] #속배열
+            array_refer_info.append(majorClass)
+            array_refer_info.append(referDoc)
+            array_refer_info.append(refer_korean)
+            array_refer_info.append(refer_chinese)
+            array_refer_info.append(refer_author)
+            array_refer_info.append(refer_authorPeriod)
+            array_refer_info.append(refer_authorPeriod)
+            array_refer_info.append(refer_institution)
+            array_refer_info.append(refer_instInfo)
             array_refer.append(array_refer_info)
 
 
