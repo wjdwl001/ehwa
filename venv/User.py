@@ -90,7 +90,6 @@ class UserPage(tk.Frame):
             val_indexChinese = indexChinese.get()  # 2. 색인어(한자)
             val_nickname = nickname.get()  # 3. 이명
             val_generalName = generalName.get()  # 4. 범칭
-            val_majorClass = majorClass.get()  # 9. 대분류
             # 5. 중분류항목
             if entry_middleClass_product.get():
                 array_middleClass.append("제작품")
