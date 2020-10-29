@@ -89,23 +89,38 @@ class UserPage(tk.Frame):
             val_nickname = nickname.get()  # 3. 이명
             val_generalName = generalName.get()  # 4. 범칭
             # 5. 중분류항목
-            if entry_middleClass_product.get():
+            if middleClass_product.get():
                 array_middleClass.append("제작품")
-            if entry_middleClass_material.get():
+            if middleClass_material.get():
                 array_middleClass.append("제작재료")
-            if entry_middleClass_tool.get():
+            if middleClass_tool.get():
                 array_middleClass.append("제작도구")
-            if entry_middleClass_producer.get():
+            if middleClass_producer.get():
                 array_middleClass.append("제작자")
             # 6. 소분류항목
-            if entry_middleClass_tool.get():
+            if subClass_metal.get():
                 array_subClass.append("금속")
-            if entry_middleClass_tool.get():
+            if subClass_wood.get():
                 array_subClass.append("목재")
-            if entry_middleClass_tool.get():
-                array_middleClass.append("제작도구")
-            if entry_middleClass_producer.get():
-                array_middleClass.append("제작자")
+            if subClass_rock.get():
+                array_subClass.append("석제")
+            if subClass_fiber.get():
+                array_subClass.append("섬유")
+            if subClass_paper.get():
+                array_subClass.append("지류")
+            if subClass_grain.get():
+                array_subClass.append("초죽")
+            if subClass_leather.get():
+                array_subClass.append("피모")
+            if subClass_todo.get():
+                array_subClass.append("토도")
+            if subClass_pigment.get():
+                array_subClass.append("안료")
+            if subClass_etc.get():
+                array_subClass.append("기타")
+            if subClass_multi.get():
+                array_subClass.append("복합")
+
             # 7. 관련어
             val_relatedWord = relatedWord.get()
             # 7-2. 정의
@@ -114,6 +129,23 @@ class UserPage(tk.Frame):
             val_detail = detail.get()
             # 17.비고
             val_note = note.get()
+
+            print(val_state)
+            print(val_ID)
+            print(val_indexKorean)
+            print(val_indexChinese)
+            print(val_nickname)
+            print(val_generalName)
+            for i in array_middleClass :
+                print(i)
+            for i in array_subClass :
+                print(i)
+            print(val_relatedWord)
+            print(val_definition)
+            print(val_detail)
+            for ary in array_refer :
+                for i in ary:
+                    print(i)
 
 
             mydb, mc = connect_db()
@@ -264,15 +296,15 @@ class UserPage(tk.Frame):
         lbl_middleClass = tk.Label(frame5, text="중분류항목", width=10)
         lbl_middleClass.pack(side=tk.LEFT, padx=10, pady=10)
 
-        entry_middleClass_product = tk.IntVar()
-        entry_middleClass_material = tk.IntVar()
-        entry_middleClass_tool = tk.IntVar()
-        entry_middleClass_producer = tk.IntVar()
+        middleClass_product = tk.IntVar()
+        middleClass_material = tk.IntVar()
+        middleClass_tool = tk.IntVar()
+        middleClass_producer = tk.IntVar()
 
-        entry_middleClass_product = tk.Checkbutton(frame5, text="제작품", variable=entry_middleClass_product)
-        entry_middleClass_material = tk.Checkbutton(frame5, text="제작재료", variable=entry_middleClass_material)
-        entry_middleClass_tool = tk.Checkbutton(frame5, text="제작도구", variable=entry_middleClass_tool)
-        entry_middleClass_producer = tk.Checkbutton(frame5, text="제작자", variable=entry_middleClass_producer)
+        entry_middleClass_product = tk.Checkbutton(frame5, text="제작품", variable=middleClass_product)
+        entry_middleClass_material = tk.Checkbutton(frame5, text="제작재료", variable=middleClass_material)
+        entry_middleClass_tool = tk.Checkbutton(frame5, text="제작도구", variable=middleClass_tool)
+        entry_middleClass_producer = tk.Checkbutton(frame5, text="제작자", variable=middleClass_producer)
 
         entry_middleClass_product.deselect()
 
@@ -289,29 +321,29 @@ class UserPage(tk.Frame):
         lbl_subClass = tk.Label(frame6, text="소분류항목", width=10)
         lbl_subClass.pack(side=tk.LEFT, padx=10, pady=10)
 
-        ckBox_subClass_metal = tk.IntVar()
-        ckBox_subClass_wood = tk.IntVar()
-        ckBox_subClass_rock = tk.IntVar()
-        ckBox_subClass_fiber = tk.IntVar()
-        ckBox_subClass_paper = tk.IntVar()
-        ckBox_subClass_grain = tk.IntVar()
-        ckBox_subClass_leather = tk.IntVar()
-        ckBox_subClass_todo = tk.IntVar()
-        ckBox_subClass_pigment = tk.IntVar()
-        ckBox_subClass_etc = tk.IntVar()
-        ckBox_subClass_multi = tk.IntVar()
+        subClass_metal = tk.IntVar()
+        subClass_wood = tk.IntVar()
+        subClass_rock = tk.IntVar()
+        subClass_fiber = tk.IntVar()
+        subClass_paper = tk.IntVar()
+        subClass_grain = tk.IntVar()
+        subClass_leather = tk.IntVar()
+        subClass_todo = tk.IntVar()
+        subClass_pigment = tk.IntVar()
+        subClass_etc = tk.IntVar()
+        subClass_multi = tk.IntVar()
 
-        ckBox_subClass_metal = tk.Checkbutton(frame6, text="금속", variable=ckBox_subClass_metal)
-        ckBox_subClass_wood = tk.Checkbutton(frame6, text="목재", variable=ckBox_subClass_wood)
-        ckBox_subClass_rock = tk.Checkbutton(frame6, text="석제", variable=ckBox_subClass_rock)
-        ckBox_subClass_fiber = tk.Checkbutton(frame6, text="섬유", variable=ckBox_subClass_fiber)
-        ckBox_subClass_paper = tk.Checkbutton(frame6, text="지류", variable=ckBox_subClass_paper)
-        ckBox_subClass_grain = tk.Checkbutton(frame6, text="초죽", variable=ckBox_subClass_grain)
-        ckBox_subClass_leather = tk.Checkbutton(frame6, text="피모", variable=ckBox_subClass_leather)
-        ckBox_subClass_todo = tk.Checkbutton(frame6, text="토도", variable=ckBox_subClass_todo)
-        ckBox_subClass_pigment = tk.Checkbutton(frame6, text="안료", variable=ckBox_subClass_pigment)
-        ckBox_subClass_etc = tk.Checkbutton(frame6, text="기타", variable=ckBox_subClass_etc)
-        ckBox_subClass_multi = tk.Checkbutton(frame6, text="복합", variable=ckBox_subClass_multi)
+        ckBox_subClass_metal = tk.Checkbutton(frame6, text="금속", variable=subClass_metal)
+        ckBox_subClass_wood = tk.Checkbutton(frame6, text="목재", variable=subClass_wood)
+        ckBox_subClass_rock = tk.Checkbutton(frame6, text="석제", variable=subClass_rock)
+        ckBox_subClass_fiber = tk.Checkbutton(frame6, text="섬유", variable=subClass_fiber)
+        ckBox_subClass_paper = tk.Checkbutton(frame6, text="지류", variable=subClass_paper)
+        ckBox_subClass_grain = tk.Checkbutton(frame6, text="초죽", variable=subClass_grain)
+        ckBox_subClass_leather = tk.Checkbutton(frame6, text="피모", variable=subClass_leather)
+        ckBox_subClass_todo = tk.Checkbutton(frame6, text="토도", variable=subClass_todo)
+        ckBox_subClass_pigment = tk.Checkbutton(frame6, text="안료", variable=subClass_pigment)
+        ckBox_subClass_etc = tk.Checkbutton(frame6, text="기타", variable=subClass_etc)
+        ckBox_subClass_multi = tk.Checkbutton(frame6, text="복합", variable=subClass_multi)
 
         ckBox_subClass_metal.pack(fill=tk.X, side=tk.LEFT, padx=10, expand=True)
         ckBox_subClass_wood.pack(fill=tk.X, side=tk.LEFT, padx=10, expand=True)
@@ -374,7 +406,7 @@ class UserPage(tk.Frame):
 
         #자주색 부분-자료추가
         def AddFrame9():
-            def Add_entryPerson():
+            def Add_entryPerson()
                 global num_entryPerson
                 frame9_extra_12_extra = tk.Frame(frame9_extra_12)
                 frame9_extra_12_extra.pack(fill=tk.X, padx=10)
@@ -415,8 +447,11 @@ class UserPage(tk.Frame):
 
 
 
-            frame9_extra = tk.Frame(frame9)
+            frame9_extra = tk.Frame(frame9_dynamic)
             frame9_extra.pack(fill=tk.X)
+            canv = tk.Canvas(frame9_extra, height=10, width=1000)
+            line = canv.create_line(00, 10, 1000, 10, fill="#00462A")
+            canv.pack()
             #9. 대분류
             frame9_extra_9 = tk.Frame(frame9_extra)
             frame9_extra_9.pack(fill=tk.X, padx=10)
@@ -493,8 +528,9 @@ class UserPage(tk.Frame):
         # 12. 입력자
         # 13. 검수자
 
-        #자료추가
+        #자료추가 버튼
         frame9 = tk.Frame(self.scrollable_frame)
+        frame9_dynamic = tk.Frame(frame9).pack(fill=tk.X, expand=True)
         frame9.pack(fill=tk.X, expand=True)
         tk.Button(frame9,text="자료 추가",command=AddFrame9).pack(side=tk.TOP, anchor=tk.W,padx=10,pady=10)
 
