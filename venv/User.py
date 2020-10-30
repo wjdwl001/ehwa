@@ -127,6 +127,20 @@ class UserPage(tk.Frame):
             val_definition = definition.get()
             # 8. 상세정보
             val_detail = detail.get()
+            # 9-11. 자료
+            array_refer = []
+            for i in range(refer):
+                array_refer_info = []  # 속배열
+                array_refer_info.append(globals()["majorClass{}".format(refer)])
+                array_refer_info.append(globals()["referDoc{}".format(refer)])
+                array_refer_info.append(globals()["refer_korean{}".format(refer)])
+                array_refer_info.append(globals()["refer_chinese{}".format(refer)])
+                array_refer_info.append(globals()["refer_author{}".format(refer)])
+                array_refer_info.append(globals()["refer_authorPeriod{}".format(refer)])
+                array_refer_info.append(globals()["refer_publishPeriod{}".format(refer)])
+                array_refer_info.append(globals()["refer_institution{}".format(refer)])
+                array_refer_info.append(globals()["refer_instInfo{}".format(refer)])
+                array_refer.append(array_refer_info)
             # 17.비고
             val_note = note.get()
 
@@ -402,11 +416,10 @@ class UserPage(tk.Frame):
         line = canv.create_line(00, 10, 1000, 10, fill="#00462A")
         canv.pack()
 
-
-
         #자주색 부분-자료추가
         def AddFrame9():
-            def Add_entryPerson()
+            refer = 1
+            def Add_entryPerson():
                 global num_entryPerson
                 frame9_extra_12_extra = tk.Frame(frame9_extra_12)
                 frame9_extra_12_extra.pack(fill=tk.X, padx=10)
@@ -449,37 +462,27 @@ class UserPage(tk.Frame):
 
             frame9_extra = tk.Frame(frame9_dynamic)
             frame9_extra.pack(fill=tk.X)
-            canv = tk.Canvas(frame9_extra, height=10, width=1000)
-            line = canv.create_line(00, 10, 1000, 10, fill="#00462A")
-            canv.pack()
             #9. 대분류
             frame9_extra_9 = tk.Frame(frame9_extra)
             frame9_extra_9.pack(fill=tk.X, padx=10)
-            majorClass = tk.StringVar()
             values_detail = ["의궤", "실록", "승정원일기", "일성록", "전례서", "법전", "지리지", "등록", "발기", "유서류", "문집", "일기", "기타"]
-            lbl_majorClass = tk.Label(frame9_extra_9, textvariable=majorClass,text="대분류\n자료 유형별", width=10,padx=10)
+            lbl_majorClass = tk.Label(frame9_extra_9,text="대분류\n자료 유형별", width=10,padx=10)
             lbl_majorClass.pack(side=tk.LEFT, padx=10)
             drBox_majorClass = tk.ttk.Combobox(frame9_extra_9, height=15, values=values_detail,state="readonly")
             drBox_majorClass.current(0)
             drBox_majorClass.pack(side=tk.LEFT, pady=10, padx=10, expand=False)
+            globals()["majorClass{}".format(refer)] = drBox_majorClass.get()
             #10. 자료원문
             frame9_extra_10 = tk.Frame(frame9_extra)
             frame9_extra_10.pack(fill=tk.X, padx=10)
-            referDoc = tk.StringVar()
-            lbl_referDoc = tk.Label(frame9_extra_10, textvariable=referDoc, text="자료원문", width=10)
+            lbl_referDoc = tk.Label(frame9_extra_10, text="자료원문", width=10)
             lbl_referDoc.pack(side=tk.LEFT, padx=10, pady=10)
-            entry_referDoc = tk.Text(frame9_extra_10)
+            globals()["referDoc{}".format(refer)] = ""
+            entry_referDoc = tk.Entry(frame9_extra_10, textvariable=["referDoc{}".format(refer)])
             entry_referDoc.pack(fill=tk.X, padx=10, expand=True)
             #11. 출전
             frame9_extra_11 = tk.Frame(frame9_extra)
             frame9_extra_11.pack(fill=tk.X, padx=10)
-            refer_korean = tk.StringVar()
-            refer_chinese = tk.StringVar()
-            refer_author = tk.StringVar()
-            refer_authorPeriod = tk.StringVar()
-            refer_publishPeriod = tk.StringVar()
-            refer_institution = tk.StringVar()
-            refer_instInfo = tk.StringVar()
             empty = tk.Label(frame9_extra_11, text="", width=10)
             empty.grid(column="0", pady=5)
             lbl_refer = tk.Label(frame9_extra_11, text="출전", width=10).grid(column="0", row="4")
@@ -490,13 +493,20 @@ class UserPage(tk.Frame):
             lbl_refer_publishPeriod = tk.Label(frame9_extra_11, text="간행시기", width=20).grid(column="1", row="5")
             lbl_refer_institution = tk.Label(frame9_extra_11, text="텍스트소장처", width=20).grid(column="1", row="6")
             lbl_refer_instiInfo = tk.Label(frame9_extra_11, text="소장처번호/링크", width=20).grid(column="1", row="7")
-            entry_refer_korean = tk.Entry(frame9_extra_11,textvariable=refer_korean).grid(column="2", row="1")
-            entry_refer_chinese = tk.Entry(frame9_extra_11,textvariable=refer_chinese).grid(column="2", row="2")
-            entry_refer_author = tk.Entry(frame9_extra_11,textvariable=refer_author).grid(column="2", row="3")
-            entry_refer_authorPeriod = tk.Entry(frame9_extra_11,textvariable=refer_authorPeriod).grid(column="2", row="4")
-            entry_refer_publishPeriod = tk.Entry(frame9_extra_11,textvariable=refer_publishPeriod).grid(column="2", row="5")
-            entry_refer_institution = tk.Entry(frame9_extra_11,textvariable=refer_institution).grid(column="2", row="6")
-            entry_refer_instInfo = tk.Entry(frame9_extra_11,textvariable=refer_instInfo).grid(column="2", row="7")
+            globals()["refer_korean{}".format(refer)] =""
+            globals()["refer_chinese{}".format(refer)] =""
+            globals()["refer_author{}".format(refer)] =""
+            globals()["refer_authorPeriod{}".format(refer)] =""
+            globals()["refer_publishPeriod{}".format(refer)] =""
+            globals()["refer_institution{}".format(refer)] =""
+            globals()["refer_instInfo{}".format(refer)] =""
+            entry_refer_korean = tk.Entry(frame9_extra_11,textvariable=["refer_korean{}".format(refer)]).grid(column="2", row="1")
+            entry_refer_chinese = tk.Entry(frame9_extra_11,textvariable=["refer_chinese{}".format(refer)]).grid(column="2", row="2")
+            entry_refer_author = tk.Entry(frame9_extra_11,textvariable=["refer_author{}".format(refer)]).grid(column="2", row="3")
+            entry_refer_authorPeriod = tk.Entry(frame9_extra_11,textvariable=["refer_authorPeriod{}".format(refer)]).grid(column="2", row="4")
+            entry_refer_publishPeriod = tk.Entry(frame9_extra_11,textvariable=["refer_publishPeriod{}".format(refer)]).grid(column="2", row="5")
+            entry_refer_institution = tk.Entry(frame9_extra_11,textvariable=["refer_institution{}".format(refer)]).grid(column="2", row="6")
+            entry_refer_instInfo = tk.Entry(frame9_extra_11,textvariable=["refer_instInfo{}".format(refer)]).grid(column="2", row="7")
             tk.Label(frame9_extra_11).grid()
             #12. 입력자
             frame9_extra_12 = tk.Frame(frame9_extra)
@@ -508,18 +518,13 @@ class UserPage(tk.Frame):
             frame9_extra_13.pack(fill=tk.X, padx=10)
             button_entryPerson = tk.Button(frame9_extra_13, text="검수자 추가", command=Add_inspecPerson)
             button_entryPerson.pack(side=tk.TOP, anchor=tk.W, padx=10, pady=10)
+            #구분선
+            canv = tk.Canvas(frame9_extra, height=10, width=1000)
+            line = canv.create_line(00, 10, 1000, 10, fill="#00462A")
+            canv.pack()
+            refer +=1
 
-            array_refer_info = [] #속배열
-            array_refer_info.append(majorClass)
-            array_refer_info.append(referDoc)
-            array_refer_info.append(refer_korean)
-            array_refer_info.append(refer_chinese)
-            array_refer_info.append(refer_author)
-            array_refer_info.append(refer_authorPeriod)
-            array_refer_info.append(refer_authorPeriod)
-            array_refer_info.append(refer_institution)
-            array_refer_info.append(refer_instInfo)
-            array_refer.append(array_refer_info)
+
 
 
         # 9. 대분류
@@ -530,7 +535,8 @@ class UserPage(tk.Frame):
 
         #자료추가 버튼
         frame9 = tk.Frame(self.scrollable_frame)
-        frame9_dynamic = tk.Frame(frame9).pack(fill=tk.X, expand=True)
+        frame9_dynamic = tk.Frame(frame9)
+        frame9_dynamic.pack(fill=tk.X, expand=True)
         frame9.pack(fill=tk.X, expand=True)
         tk.Button(frame9,text="자료 추가",command=AddFrame9).pack(side=tk.TOP, anchor=tk.W,padx=10,pady=10)
 
