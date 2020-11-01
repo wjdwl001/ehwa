@@ -55,7 +55,7 @@ class UserPage(tk.Frame):
         val_definition = ""  # 7-2. 정의
         val_detail = ""  # 8. 상세정보
         ############
-        array_refer = []  # 9-11. 출전 : [["자료1-대분류", "자료1-자료원문", "자료1-한글", "자료1-한자", "자료1-저자", "자료1=저자활동시기" ,,,]["자료2-한글",,,],,,]
+        array_refer = [[0 for col in range(300)] for row in range(10)]  # 9-11. 출전 : [["자료1-대분류", "자료1-자료원문", "자료1-한글", "자료1-한자", "자료1-저자", "자료1=저자활동시기" ,,,]["자료2-한글",,,],,,]
         array_entryPerson = []  # 12-1. 입력자 : [["자료1-입력자1","자료1-입력자2",,,],["자료2-입력자1","자료2-입력자2",,,,],,,]
         array_entryDate = []  # 12-2. 입력날짜   => 입력자와 동일
         array_inspecPerson = []  # 13-1. 검수자  => 입력자와 동일
@@ -129,18 +129,6 @@ class UserPage(tk.Frame):
             val_detail = detail.get()
             # 9-11. 자료
             array_refer = []
-            for i in range(refer):
-                array_refer_info = []  # 속배열
-                array_refer_info.append(globals()["majorClass{}".format(refer)])
-                array_refer_info.append(globals()["referDoc{}".format(refer)])
-                array_refer_info.append(globals()["refer_korean{}".format(refer)])
-                array_refer_info.append(globals()["refer_chinese{}".format(refer)])
-                array_refer_info.append(globals()["refer_author{}".format(refer)])
-                array_refer_info.append(globals()["refer_authorPeriod{}".format(refer)])
-                array_refer_info.append(globals()["refer_publishPeriod{}".format(refer)])
-                array_refer_info.append(globals()["refer_institution{}".format(refer)])
-                array_refer_info.append(globals()["refer_instInfo{}".format(refer)])
-                array_refer.append(array_refer_info)
             # 17.비고
             val_note = note.get()
 
@@ -418,7 +406,6 @@ class UserPage(tk.Frame):
 
         #자주색 부분-자료추가
         def AddFrame9():
-            refer = 1
             def Add_entryPerson():
                 global num_entryPerson
                 frame9_extra_12_extra = tk.Frame(frame9_extra_12)
