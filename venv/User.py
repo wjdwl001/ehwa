@@ -71,7 +71,144 @@ class UserPage(tk.Frame):
 
 
         def save():
-            return
+            if entry_state.get() == 1:
+                val_state = "대상"
+            if entry_state.get() == 2:
+                val_state = "비대상"
+            if entry_state.get() == 3:
+                val_state = "보류"
+            if entry_state.get() == 4:
+                val_state = "삭제"
+            val_ID  # 0. ID(고유번호)
+            val_indexKorean = indexKorean.get()  # 1. 색인어(한글)
+            val_indexChinese = indexChinese.get()  # 2. 색인어(한자)
+            val_nickname = nickname.get()  # 3. 이명
+            val_generalName = generalName.get()  # 4. 범칭
+            # 5. 중분류항목
+            if middleClass_product.get():
+                array_middleClass.append("제작품")
+            if middleClass_material.get():
+                array_middleClass.append("제작재료")
+            if middleClass_tool.get():
+                array_middleClass.append("제작도구")
+            if middleClass_producer.get():
+                array_middleClass.append("제작자")
+            # 6. 소분류항목
+            if subClass_metal.get():
+                array_subClass.append("금속")
+            if subClass_wood.get():
+                array_subClass.append("목재")
+            if subClass_rock.get():
+                array_subClass.append("석제")
+            if subClass_fiber.get():
+                array_subClass.append("섬유")
+            if subClass_paper.get():
+                array_subClass.append("지류")
+            if subClass_grain.get():
+                array_subClass.append("초죽")
+            if subClass_leather.get():
+                array_subClass.append("피모")
+            if subClass_todo.get():
+                array_subClass.append("토도")
+            if subClass_pigment.get():
+                array_subClass.append("안료")
+            if subClass_etc.get():
+                array_subClass.append("기타")
+            if subClass_multi.get():
+                array_subClass.append("복합")
+
+            # 7. 관련어
+            val_relatedWord = relatedWord.get()
+            # 7-2. 정의
+            val_definition = definition.get()
+            # 8. 상세정보
+            val_detail = detail.get()
+            # 9-11. 자료
+            array_refer = []
+            # 17.비고
+            val_note = note.get()
+
+            print(val_state)
+            print(val_ID)
+            print(val_indexKorean)
+            print(val_indexChinese)
+            print(val_nickname)
+            print(val_generalName)
+            for i in array_middleClass :
+                print(i)
+            for i in array_subClass :
+                print(i)
+            print(val_relatedWord)
+            print(val_definition)
+            print(val_detail)
+            for ary in array_refer :
+                for i in ary:
+                    print(i)
+
+
+            mydb, mc = connect_db()
+            sql1 = "INSERT INTO 조선시대공예정보(대상, 고유번호, 색인어한글, 색인어한자, 이명, 범칭, 관련어, 정의, 상세정보, 비고, userID) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)"
+            val1 = (val_state, val_ID, val_indexKorean, val_indexChinese, val_nickname, val_generalName, val_relatedWord, val_definition, val_detail, val_note, val_username)
+            sql2 = "INSERT INTO 중분류항목(고유번호, 중분류)"
+            sql3 = "INSERT INTO 소분류항목(고유번호, 소분류)"
+            sql4 = "INSERT INTO 출전(대분류, 자료원문, 한글, 한자, 저자, 저자활동시기, 간행시기, 텍스트소장처, 소장처번호및링크, 고유번호) VALUES (%s, %s, %s, %s, %s, %s, %d, %s, %s, %s)"
+            sql5 = "INSERT INTO 입력정보(입력자, 입력일, 고유번호, 출전한글)"
+            sql6 = "INSERT INTO 검수정보(검수자, 검수일, 고유번호, 출전한글)"
+            sql7 = "INSERT INTO 유물(분류, 명칭, 국명, 시기, 소장처, 소장처번호, 출토지, 출전및출처, 고유번호)"
+            sql8 = "INSERT INTO 이미지입력정보(입력자, 입력일, 고유번호, 유물명칭)"
+            sql9 = "INSERT INTO 이미지검수정보(검수자, 검수일, 고유번호, 유물명칭)"
+
+
+            try:
+                mc.execute(sql1, val1)
+                mydb.commit()
+
+                for i in array_middleClass:
+                    val2 = (val_ID, i)
+                    mc.execute(sql2, val2)
+                    mydb.commit()
+
+                for i in array_subClass:
+                    val3 = (val_ID, i)
+                    mc.execute(sql3, val3)
+                    mydb.commit()
+
+                for i in array_refer:
+                    val4 = i
+                    val4.append(val_ID)
+                    val4 = tuple(val4)
+                    mc.execute(sql4, val4)
+                    mydb.commit()
+
+                    for j, k in zip(array_entryPerson[i], array_entryDate[i]):
+                        val5 = (j, k, val_ID, i[2])
+                        mc.execute(sql5, val5)
+                        mydb.commit()
+
+                    for l, m in zip(array_inspecPerson[i], array_inspecDate[i]):
+                        val6 = (l, m, val_ID, i[2])
+                        mc.execute(sql6, val6)
+                        mydb.commit()
+
+                for i in array_relic:
+                    val7 = i
+                    val7.append(val_ID)
+                    val7 = tuple(val7)
+                    mc.execute(sql7, val7)
+                    mydb.commit()
+
+                    for j, k in zip(array_imageEntryPerson[i], array_imageEntryDate[i]):
+                        val8 = (j, k, val_ID, i[1])
+                        mc.execute(sql8, val8)
+                        mydb.commit()
+
+                    for l, m in zip(array_imageInspecPerson[i], array_imageInspecDate[i]):
+                        val9 = (l, m, val_ID, i[1])
+                        mc.execute(sql9, val9)
+                        mydb.commit()
+                messagebox.showinfo("알림", "등록 완료!")
+            except:
+                messagebox.showinfo("알림", "입력에 실패했습니다!")
 
         #임시저장
         def save_temp():
@@ -151,12 +288,65 @@ class UserPage(tk.Frame):
 
 
             mydb, mc = connect_db()
-            sql = "INSERT INTO temp(대상, 고유번호, 색인어한글, 색인어한자, 이명, 범칭, 관련어, 상세정보, 대분류) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s)"
-            val = (val_state, val_ID, val_indexKorean, val_indexChinese, val_nickname, val_generalName, val_relatedWord, val_detail, val_majorClass)
+            sql1 = "INSERT INTO 임시조선시대공예정보(대상, 고유번호, 색인어한글, 색인어한자, 이명, 범칭, 관련어, 정의, 상세정보, 비고, userID) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)"
+            val1 = (val_state, val_ID, val_indexKorean, val_indexChinese, val_nickname, val_generalName, val_relatedWord, val_definition, val_detail, val_note, val_username)
+            sql2 = "INSERT INTO 임시중분류항목(고유번호, 중분류)"
+            sql3 = "INSERT INTO 임시소분류항목(고유번호, 소분류)"
+            sql4 = "INSERT INTO 임시출전(대분류, 자료원문, 한글, 한자, 저자, 저자활동시기, 간행시기, 텍스트소장처, 소장처번호및링크, 고유번호) VALUES (%s, %s, %s, %s, %s, %s, %d, %s, %s, %s)"
+            sql5 = "INSERT INTO 임시입력정보(입력자, 입력일, 고유번호, 출전한글)"
+            sql6 = "INSERT INTO 임시검수정보(검수자, 검수일, 고유번호, 출전한글)"
+            sql7 = "INSERT INTO 임시유물(분류, 명칭, 국명, 시기, 소장처, 소장처번호, 출토지, 출전및출처, 고유번호)"
+            sql8 = "INSERT INTO 임시이미지입력정보(입력자, 입력일, 고유번호, 유물명칭)"
+            sql9 = "INSERT INTO 임시이미지검수정보(검수자, 검수일, 고유번호, 유물명칭)"
+
 
             try:
-                mc.execute(sql, val)
+                mc.execute(sql1, val1)
                 mydb.commit()
+
+                for i in array_middleClass:
+                    val2 = (val_ID, i)
+                    mc.execute(sql2, val2)
+                    mydb.commit()
+
+                for i in array_subClass:
+                    val3 = (val_ID, i)
+                    mc.execute(sql3, val3)
+                    mydb.commit()
+
+                for i in array_refer:
+                    val4 = i
+                    val4.append(val_ID)
+                    val4 = tuple(val4)
+                    mc.execute(sql4, val4)
+                    mydb.commit()
+
+                    for j, k in zip(array_entryPerson[i], array_entryDate[i]):
+                        val5 = (j, k, val_ID, i[2])
+                        mc.execute(sql5, val5)
+                        mydb.commit()
+
+                    for l, m in zip(array_inspecPerson[i], array_inspecDate[i]):
+                        val6 = (l, m, val_ID, i[2])
+                        mc.execute(sql6, val6)
+                        mydb.commit()
+
+                for i in array_relic:
+                    val7 = i
+                    val7.append(val_ID)
+                    val7 = tuple(val7)
+                    mc.execute(sql7, val7)
+                    mydb.commit()
+
+                    for j, k in zip(array_imageEntryPerson[i], array_imageEntryDate[i]):
+                        val8 = (j, k, val_ID, i[1])
+                        mc.execute(sql8, val8)
+                        mydb.commit()
+
+                    for l, m in zip(array_imageInspecPerson[i], array_imageInspecDate[i]):
+                        val9 = (l, m, val_ID, i[1])
+                        mc.execute(sql9, val9)
+                        mydb.commit()
                 messagebox.showinfo("알림", "등록 완료!")
             except:
                 messagebox.showinfo("알림", "입력에 실패했습니다!")
@@ -420,7 +610,7 @@ class UserPage(tk.Frame):
                                                        year=int(datetime.today().year),
                                                        month=int(datetime.today().month),
                                                        day=int(datetime.today().day)).pack(side=tk.LEFT, padx=10)
-                entryDate = datetime.today().strftime("%Y%m%d")
+                entryDate = datetime.today().strftime("%Y-%m-%d")
                 array_entryDate_info = []
                 array_entryDate_info.append(entryDate)
                 array_entryPerson.append(array_entryPerson_info)
