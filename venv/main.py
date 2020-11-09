@@ -4,8 +4,6 @@ import tkinter.font
 import os
 import pymysql
 from tkinter import messagebox
-import User
-import UserTemp
 
 #color : #00462A #77E741
 
