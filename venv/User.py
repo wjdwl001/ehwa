@@ -153,23 +153,29 @@ class UserPage(tk.Frame):
                 real_array_refer.append([e.get() for e in array_refer[i]])
             for i in range(len(array_relic)):
                 real_array_relic.append([e.get() for e in array_relic[i]])
+
             for i in range(len(array_entryPerson)):
                 real_array_entryPerson.append([e.get() for e in array_entryPerson[i]])
             for i in range(len(array_inspecPerson)):
                 real_array_inspecPerson.append([e.get() for e in array_inspecPerson[i]])
-            for i in range(len(array_imageEntryPerson)):
-                real_array_imageEntryPerson.append([e.get() for e in array_imageInspecPerson[i]])
-            for i in range(len(array_imageInspecPerson)):
-                real_array_imageInspecPerson.append([e.get() for e in array_imageEntryPerson[i]])
-            for i in range(len(array_entryDate)):
-                real_array_entryDate.append([e.get_date() for e in array_entryDate[i]])
-            for i in range(len(array_inspecDate)):
-                real_array_inspecDate.append([e.get_date() for e in array_inspecDate[i]])
-            for i in range(len(array_imageEntryDate)):
-                real_array_imageEntryDate.append([e.get_date() for e in array_imageEntryDate[i]])
-            for i in range(len(array_imageInspecDate)):
-                real_array_imageInspecDate.append([e.get_date() for e in array_imageInspecDate[i]])
 
+            for i in range(len(array_imageEntryPerson)):
+                real_array_imageEntryPerson.append([e.get() for e in array_imageEntryPerson[i]])
+            for i in range(len(array_imageInspecPerson)):
+                real_array_imageInspecPerson.append([e.get() for e in array_imageInspecPerson[i]])
+
+            for i in range(len(array_entryDate)):
+                real_array_entryDate.append([str(e.get_date()) for e in array_entryDate[i]])
+            for i in range(len(array_inspecDate)):
+                real_array_inspecDate.append([str(e.get_date()) for e in array_inspecDate[i]])
+
+            for i in range(len(array_imageEntryDate)):
+                real_array_imageEntryDate.append([str(e.get_date()) for e in array_imageEntryDate[i]])
+            for i in range(len(array_imageInspecDate)):
+                real_array_imageInspecDate.append([str(e.get_date()) for e in array_imageInspecDate[i]])
+
+
+            print(real_array_entryDate)
 
             mydb, mc = connect_db()
             sql1 = "INSERT INTO 조선시대공예정보(대상, 고유번호, 색인어한글, 색인어한자, 이명, 범칭, 관련어, 정의, 상세정보, 비고, userID) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)"
@@ -297,18 +303,22 @@ class UserPage(tk.Frame):
                 real_array_refer.append([e.get() for e in array_refer[i]])
             for i in range(len(array_relic)):
                 real_array_relic.append([e.get() for e in array_relic[i]])
+
             for i in range(len(array_entryPerson)):
                 real_array_entryPerson.append([e.get() for e in array_entryPerson[i]])
             for i in range(len(array_inspecPerson)):
                 real_array_inspecPerson.append([e.get() for e in array_inspecPerson[i]])
+
             for i in range(len(array_imageEntryPerson)):
-                real_array_imageEntryPerson.append([e.get() for e in array_imageInspecPerson[i]])
+                real_array_imageEntryPerson.append([e.get() for e in array_imageEntryPerson[i]])
             for i in range(len(array_imageInspecPerson)):
-                real_array_imageInspecPerson.append([e.get() for e in array_imageEntryPerson[i]])
+                real_array_imageInspecPerson.append([e.get() for e in array_imageInspecPerson[i]])
+
             for i in range(len(array_entryDate)):
                 real_array_entryDate.append([e.get_date() for e in array_entryDate[i]])
             for i in range(len(array_inspecDate)):
                 real_array_inspecDate.append([e.get_date() for e in array_inspecDate[i]])
+
             for i in range(len(array_imageEntryDate)):
                 real_array_imageEntryDate.append([e.get_date() for e in array_imageEntryDate[i]])
             for i in range(len(array_imageInspecDate)):
@@ -794,8 +804,8 @@ class UserPage(tk.Frame):
                                                        month=int(datetime.today().month),
                                                        day=int(datetime.today().day))
                 cal_imageInspecPerson.pack(side=tk.LEFT, padx=10)
-                array_imageEntryPerson[self.relic-1].append(entry_imageInspecPerson)
-                array_imageEntryDate[self.relic-1].append(cal_imageInspecPerson)
+                array_imageInspecPerson[self.relic-1].append(entry_imageInspecPerson)
+                array_imageInspecDate[self.relic-1].append(cal_imageInspecPerson)
             def Browser_relic_image():
                 filename = filedialog.askopenfilename()
 
