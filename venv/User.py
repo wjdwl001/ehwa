@@ -174,16 +174,6 @@ class UserPage(tk.Frame):
             for i in range(len(array_imageInspecDate)):
                 real_array_imageInspecDate.append([e.get_date() for e in array_imageInspecDate[i]])
 
-
-            print(real_array_entryPerson)
-            print(real_array_entryDate)
-            print(real_array_inspecPerson)
-            print(real_array_inspecDate)
-            print(real_array_imageEntryPerson)
-            print(real_array_imageEntryDate)
-            print(real_array_imageInspecPerson)
-            print(real_array_imageInspecDate)
-
             mydb, mc = connect_db()
             sql1 = "INSERT INTO 조선시대공예정보(대상, 고유번호, 색인어한글, 색인어한자, 이명, 범칭, 관련어, 정의, 상세정보, 비고, userID) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)"
             val1 = (val_state, val_ID, val_indexKorean, val_indexChinese, val_nickname, val_generalName, val_relatedWord, val_definition, val_detail, val_note, val_username)
@@ -277,7 +267,7 @@ class UserPage(tk.Frame):
                 print(real_array_imageInspecDate)
                 for i in range(len(real_array_relic)):
                     for j, k in zip(real_array_imageEntryPerson[i], real_array_imageEntryDate[i]):
-                        val8 = (j, k.get_date(), val_ID, real_array_relic[i][1])
+                        val8 = (j, k, val_ID, real_array_relic[i][1])
                         mc.execute(sql8, val8)
                         mydb.commit()
             except pymysql.InternalError as error:
@@ -288,7 +278,7 @@ class UserPage(tk.Frame):
             try:
                 for i in range(len(real_array_relic)):
                     for l, m in zip(real_array_imageInspecPerson[i], real_array_imageInspecDate[i]):
-                        val9 = (l, m.get_date(), val_ID, real_array_relic[i][1])
+                        val9 = (l, m, val_ID, real_array_relic[i][1])
                         mc.execute(sql9, val9)
                         mydb.commit()
             except pymysql.InternalError as error:
