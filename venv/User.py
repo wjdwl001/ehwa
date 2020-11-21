@@ -16,13 +16,11 @@ def connect_db():
         host="localhost",
         port=3306,
         user="root",
-        passwd="",
+        passwd="esther0916",
         database="ehwa"
     )
     mc = mydb.cursor()
     return (mydb, mc)
-
-
 
 class SampleApp(tk.Tk):
     def __init__(self):
@@ -50,10 +48,12 @@ class UserPage(tk.Frame):
     num_inspecPerson.append(0)
     num_imageEntryPerson.append(0)
     num_imageInspecPerson.append(0)
-    def __init__(self, master, *args, **kwargs):
+    def __init__(self, master, par_id, par_password, *args, **kwargs):
         # 멤버변수
-        val_username = "user"  # 아이디
-        val_password = ""  # 비밀번호
+        val_username = par_id  # 아이디
+        val_password = par_password  # 비밀번호
+        print(val_username)
+        print(val_password)
         val_state = ""  # 00. 상태
         val_ID = ""  # 0. ID(고유번호)
         val_indexKorean = ""  # 1. 색인어(한글)
@@ -287,6 +287,10 @@ class UserPage(tk.Frame):
                 print(">>>>>>>>>>>>>", code, message)
 
             messagebox.showinfo("알림", "등록 완료!")
+
+            print(val_username)
+            print(val_password)
+
 
         #임시저장
         def save_temp():
@@ -966,7 +970,7 @@ def main():
     root = tk.Tk()
     root.geometry("1020x700+100+100")
     root.resizable(False,False)
-    app = UserPage(root)
+    app = UserPage(root,"wjdwl0208","esther0916@")
     app.pack()
     root.mainloop()
 
