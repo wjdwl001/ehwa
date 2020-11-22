@@ -16,7 +16,7 @@ def connect_db():
         host="localhost",
         port=3306,
         user="root",
-        passwd="",
+        passwd="esther0916",
         database="ehwa"
     )
     mc = mydb.cursor()
