@@ -16,7 +16,7 @@ def connect_db():
         host="localhost",
         port=3306,
         user="root",
-        passwd="esther0916",
+        passwd="",
         database="ehwa"
     )
     mc = mydb.cursor()
@@ -213,6 +213,16 @@ class UserPage(tk.Frame):
             for i in range(len(array_imageInspecDate)):
                 real_array_imageInspecDate.append([e.get_date() for e in array_imageInspecDate[i]])
 
+            print(real_array_entryPerson)
+            print(real_array_entryDate)
+            print(real_array_inspecPerson)
+            print(real_array_inspecDate)
+            print(real_array_imageEntryPerson)
+            print(real_array_imageEntryDate)
+            print(real_array_imageInspecPerson)
+            print(real_array_imageInspecDate)
+            print('-----------------------------------')
+
             mydb, mc = connect_db()
             sql1 = "INSERT INTO 조선시대공예정보(대상, 고유번호, 색인어한글, 색인어한자, 이명, 범칭, 관련어, 정의, 상세정보, 비고, userID) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)"
             val1 = (val_state, val_ID, val_indexKorean, val_indexChinese, val_nickname, val_generalName, val_relatedWord, val_definition, val_detail, val_note, val_username)
@@ -226,31 +236,31 @@ class UserPage(tk.Frame):
             sql9 = "INSERT INTO 이미지검수정보(검수자, 검수일, 고유번호, 유물명칭) VALUES (%s, %s, %s, %s)"
             try:
                 mc.execute(sql1, val1)
-                mydb.commit()
             except pymysql.InternalError as error:
                 messagebox.showinfo("알림", "조선시대공예정보 입력에 실패했습니다!")
                 code, message = error.args
                 print(">>>>>>>>>>>>>", code, message)
+                return
 
             try:
                 for i in array_middleClass:
                     val2 = (val_ID, i)
                     mc.execute(sql2, val2)
-                    mydb.commit()
             except pymysql.InternalError as error:
                 messagebox.showinfo("알림", "중분류항목 입력에 실패했습니다!")
                 code, message = error.args
                 print(">>>>>>>>>>>>>", code, message)
+                return
 
             try:
                 for i in array_subClass:
                     val3 = (val_ID, i)
                     mc.execute(sql3, val3)
-                    mydb.commit()
             except pymysql.InternalError as error:
                 messagebox.showinfo("알림", "소분류항목 입력에 실패했습니다!")
                 code, message = error.args
                 print(">>>>>>>>>>>>>", code, message)
+                return
 
             try:
                 for i in real_array_refer:
@@ -258,33 +268,37 @@ class UserPage(tk.Frame):
                     val4.append(val_ID)
                     val4 = tuple(val4)
                     mc.execute(sql4, val4)
-                    mydb.commit()
             except pymysql.InternalError as error:
                 messagebox.showinfo("알림", "출전 입력에 실패했습니다!")
                 code, message = error.args
                 print(">>>>>>>>>>>>>", code, message)
+                return
 
             try:
+                print(real_array_entryPerson)
+                print(real_array_entryDate)
                 for i in range(0, len(real_array_refer)):
                     for j, k in zip(real_array_entryPerson[i], array_entryDate[i]):
                         val5 = (j, k.get_date(), val_ID, real_array_refer[i][2])
                         mc.execute(sql5, val5)
-                        mydb.commit()
             except pymysql.InternalError as error:
                 messagebox.showinfo("알림", "입력정보 입력에 실패했습니다!")
                 code, message = error.args
                 print(">>>>>>>>>>>>>", code, message)
+                return
 
             try:
+                print(real_array_inspecPerson)
+                print(real_array_inspecDate)
                 for i in range(0, len(real_array_refer)):
                     for l, m in zip(real_array_inspecPerson[i], array_inspecDate[i]):
                         val6 = (l, m.get_date(), val_ID, real_array_refer[i][2])
                         mc.execute(sql6, val6)
-                        mydb.commit()
             except pymysql.InternalError as error:
                 messagebox.showinfo("알림", "검수정보 입력에 실패했습니다!")
                 code, message = error.args
                 print(">>>>>>>>>>>>>", code, message)
+                return
 
             try:
                 for i in real_array_relic:
@@ -292,38 +306,40 @@ class UserPage(tk.Frame):
                     val7.append(val_ID)
                     val7 = tuple(val7)
                     mc.execute(sql7, val7)
-                    mydb.commit()
             except pymysql.InternalError as error:
                 messagebox.showinfo("알림", "유물 입력에 실패했습니다!")
                 code, message = error.args
                 print(">>>>>>>>>>>>>", code, message)
+                return
 
             try:
+                print(real_array_imageEntryPerson)
+                print(real_array_imageEntryDate)
                 for i in range(0, len(real_array_relic)):
                     for j, k in zip(real_array_imageEntryPerson[i], real_array_imageEntryDate[i]):
                         val8 = (j, k, val_ID, real_array_relic[i][1])
                         mc.execute(sql8, val8)
-                        mydb.commit()
             except pymysql.InternalError as error:
                 messagebox.showinfo("알림", "이미지입력정보 입력에 실패했습니다!")
                 code, message = error.args
                 print(">>>>>>>>>>>>>", code, message)
+                return
 
             try:
+                print(real_array_imageInspecPerson)
+                print(real_array_imageInspecDate)
                 for i in range(0, len(real_array_relic)):
                     for l, m in zip(real_array_imageInspecPerson[i], real_array_imageInspecDate[i]):
                         val9 = (l, m, val_ID, real_array_relic[i][1])
                         mc.execute(sql9, val9)
-                        mydb.commit()
             except pymysql.InternalError as error:
                 messagebox.showinfo("알림", "이미지검수정보 입력에 실패했습니다!")
                 code, message = error.args
                 print(">>>>>>>>>>>>>", code, message)
+                return
 
+            mydb.commit()
             messagebox.showinfo("알림", "등록 완료!")
-
-
-
 
         #임시저장
         def save_temp():
@@ -424,31 +440,31 @@ class UserPage(tk.Frame):
 
             try:
                 mc.execute(sql1, val1)
-                mydb.commit()
             except pymysql.InternalError as error:
                 messagebox.showinfo("알림", "임시조선시대공예정보 입력에 실패했습니다!")
                 code, message = error.args
                 print(">>>>>>>>>>>>>", code, message)
+                return
 
             try:
                 for i in array_middleClass:
                     val2 = (val_ID, i)
                     mc.execute(sql2, val2)
-                    mydb.commit()
             except pymysql.InternalError as error:
                 messagebox.showinfo("알림", "임시중분류항목 입력에 실패했습니다!")
                 code, message = error.args
                 print(">>>>>>>>>>>>>", code, message)
+                return
 
             try:
                 for i in array_subClass:
                     val3 = (val_ID, i)
                     mc.execute(sql3, val3)
-                    mydb.commit()
             except pymysql.InternalError as error:
                 messagebox.showinfo("알림", "임시소분류항목 입력에 실패했습니다!")
                 code, message = error.args
                 print(">>>>>>>>>>>>>", code, message)
+                return
 
             try:
                 for i in real_array_refer:
@@ -456,36 +472,35 @@ class UserPage(tk.Frame):
                     val4.append(val_ID)
                     val4 = tuple(val4)
                     mc.execute(sql4, val4)
-                    mydb.commit()
             except pymysql.InternalError as error:
                 messagebox.showinfo("알림", "임시출전 입력에 실패했습니다!")
                 code, message = error.args
                 print(">>>>>>>>>>>>>", code, message)
+                return
 
             try:
-                print(real_array_refer)
                 for i in range(0, len(real_array_refer)):
                     for j, k in zip(real_array_entryPerson[i], array_entryDate[i]):
                         print(i)
                         print(real_array_refer[i])
                         val5 = (j, k.get_date(), val_ID, real_array_refer[i][2])
                         mc.execute(sql5, val5)
-                        mydb.commit()
             except pymysql.InternalError as error:
                 messagebox.showinfo("알림", "임시입력정보 입력에 실패했습니다!")
                 code, message = error.args
                 print(">>>>>>>>>>>>>", code, message)
+                return
 
             try:
                 for i in range(0, len(real_array_refer)):
                     for l, m in zip(real_array_inspecPerson[i], array_inspecDate[i]):
                         val6 = (l, m.get_date(), val_ID, real_array_refer[i][2])
                         mc.execute(sql6, val6)
-                        mydb.commit()
             except pymysql.InternalError as error:
                 messagebox.showinfo("알림", "임시검수정보 입력에 실패했습니다!")
                 code, message = error.args
                 print(">>>>>>>>>>>>>", code, message)
+                return
 
             try:
                 for i in real_array_relic:
@@ -493,34 +508,35 @@ class UserPage(tk.Frame):
                     val7.append(val_ID)
                     val7 = tuple(val7)
                     mc.execute(sql7, val7)
-                    mydb.commit()
             except pymysql.InternalError as error:
                 messagebox.showinfo("알림", "임시유물 입력에 실패했습니다!")
                 code, message = error.args
                 print(">>>>>>>>>>>>>", code, message)
+                return
 
             try:
                 for i in range(0, len(real_array_relic)):
                     for j, k in zip(real_array_imageEntryPerson[i], real_array_imageEntryDate[i]):
                         val8 = (j, k, val_ID, real_array_relic[i][1])
                         mc.execute(sql8, val8)
-                        mydb.commit()
             except pymysql.InternalError as error:
                 messagebox.showinfo("알림", "임시이미지입력정보 입력에 실패했습니다!")
                 code, message = error.args
                 print(">>>>>>>>>>>>>", code, message)
+                return
 
             try:
                 for i in range(0, len(real_array_relic)):
                     for l, m in zip(real_array_imageInspecPerson[i], real_array_imageInspecDate[i]):
                         val9 = (l, m, val_ID, real_array_relic[i][1])
                         mc.execute(sql9, val9)
-                        mydb.commit()
             except pymysql.InternalError as error:
                 messagebox.showinfo("알림", "임시이미지검수정보 입력에 실패했습니다!")
                 code, message = error.args
                 print(">>>>>>>>>>>>>", code, message)
+                return
 
+            mydb.commit()
             messagebox.showinfo("알림", "임시 저장 완료!")
 
 
