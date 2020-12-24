@@ -448,6 +448,38 @@ class UserEdit(tk.Frame):
 
 class UserData(tk.Frame):
     def __init__(self, master, par_id, par_password, *args, **kwargs):
+        def search_by_name(): #검색하면 시행되는 함수입니다 내부 데이터 db코드 부탁드려요
+            self.treeview.delete(*self.treeview.get_children())
+            columns = ["고유번호", "색인어", "정의"]
+
+            #임시데이터이므로 지우고 새로운 데이터 추가해주세요
+            treelist = [("1", "색인어1", "테스트1"), ("2", "색인어2", "테스트2"), ("3", "색인어3", "테스트3")
+                , ("1", "색인어1", "테스트1"), ("2", "색인어2", "테스트2"), ("3", "색인어3", "테스트3")
+                , ("1", "색인어1", "테스트1"), ("2", "색인어2", "테스트2"), ("3", "색인어3", "테스트3")
+                , ("1", "색인어1", "테스트1"), ("2", "색인어2", "테스트2"), ("3", "색인어3", "테스트3")
+                , ("1", "색인어1", "테스트1"), ("2", "색인어2", "테스트2"), ("3", "색인어3", "테스트3")
+                , ("1", "색인어1", "테스트1"), ("2", "색인어2", "테스트2"), ("3", "색인어3", "테스트3")
+                , ("1", "색인어1", "테스트1"), ("2", "색인어2", "테스트2"), ("3", "색인어3", "테스트3")
+                , ("1", "색인어1", "테스트1"), ("2", "색인어2", "테스트2"), ("3", "색인어3", "테스트3")
+                , ("1", "색인어1", "테스트1"), ("2", "색인어2", "테스트2"), ("3", "색인어3", "테스트3")
+                , ("1", "색인어1", "테스트1"), ("2", "색인어2", "테스트2"), ("3", "색인어3", "테스트3")
+                , ("1", "색인어1", "테스트1"), ("2", "색인어2", "테스트2"), ("3", "색인어3", "테스트3")
+                , ("1", "색인어1", "테스트1"), ("2", "색인어2", "테스트2"), ("3", "색인어3", "테스트3")]
+
+            self.treeview.column("#1", width=100)
+            self.treeview.column("#2", width=200)
+            self.treeview.column("#3", width=500)
+            self.treeview.heading("#1", text="고유번호")
+            self.treeview.heading("#2", text="색인어")
+            self.treeview.heading("#3", text="정의")
+
+            for i in range(len(treelist)):
+                # 이부분에서 iid에 고유번호 들어가게 구성
+                self.treeview.insert('', 'end', text=i, values=treelist[i], iid=str(i))
+
+            self.treeview.pack(side=tk.LEFT)
+            self.treeview.bind('<1>', self.NewFrame)
+
         tk.Frame.__init__(self,master)
         val = ""
         self.master = master
@@ -455,10 +487,20 @@ class UserData(tk.Frame):
         self.pack(fill=tk.X, expand=True)
         userid = par_id
         userpw = par_password
-        tk.Label(text=userid + "님의 입력 데이터 확인", bg="#00462A", width="100", height="3",
+        tk.Label(text="전체데이터 확인", bg="#00462A", width="100", height="3",
                      fg="white",
                      font=('맑은 고딕', 13)).pack(fill=tk.X)
         tk.Label(text="").pack()
+
+        frame_search = tk.Frame(width = 500, height =20)
+        frame_search.pack(anchor=tk.E,ipadx=60,ipady=5)
+        entry_search = tk.Entry(frame_search, width=20)
+        entry_search.grid(column="0",row="0")
+        tk.Label(frame_search).grid(column="1",row="0")
+        button_search = tk.Button(frame_search,width=3, height=1, text="검색", command=search_by_name)
+        button_search.grid(column="2",row="0")
+
+
         frame_treelist = tk.Frame(width = 800, height = 550)
         frame_treelist.pack()
 

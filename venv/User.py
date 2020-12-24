@@ -224,7 +224,6 @@ class UserPage(tk.Frame):
             sql7 = "INSERT INTO 유물(분류, 명칭, 국명, 시기, 소장처, 소장처번호, 출토지, 출전및출처, 고유번호) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s)"
             sql8 = "INSERT INTO 이미지입력정보(입력자, 입력일, 고유번호, 유물명칭) VALUES (%s, %s, %s, %s)"
             sql9 = "INSERT INTO 이미지검수정보(검수자, 검수일, 고유번호, 유물명칭) VALUES (%s, %s, %s, %s)"
-            print(real_array_refer)
             try:
                 mc.execute(sql1, val1)
                 mydb.commit()
@@ -322,6 +321,8 @@ class UserPage(tk.Frame):
                 print(">>>>>>>>>>>>>", code, message)
 
             messagebox.showinfo("알림", "등록 완료!")
+
+
 
 
         #임시저장
