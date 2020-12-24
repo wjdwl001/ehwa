@@ -213,15 +213,6 @@ class UserPage(tk.Frame):
             for i in range(len(array_imageInspecDate)):
                 real_array_imageInspecDate.append([e.get_date() for e in array_imageInspecDate[i]])
 
-            print(real_array_entryPerson)
-            print(real_array_entryDate)
-            print(real_array_inspecPerson)
-            print(real_array_inspecDate)
-            print(real_array_imageEntryPerson)
-            print(real_array_imageEntryDate)
-            print(real_array_imageInspecPerson)
-            print(real_array_imageInspecDate)
-            print('-----------------------------------')
 
             mydb, mc = connect_db()
             sql1 = "INSERT INTO 조선시대공예정보(대상, 고유번호, 색인어한글, 색인어한자, 이명, 범칭, 관련어, 정의, 상세정보, 비고, userID) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)"
