@@ -245,11 +245,13 @@ class UserMenu(tk.Frame):
         tk.Label(self, text="실무자 메뉴", bg="#00462A", width="300", height="3", fg="white", font=('맑은 고딕', 13)).pack()
         tk.Label(self, text="").pack()
 
-        tk.Button(self, text="자료 입력", width=20, height=1, bg="#00462A", fg="white",
+        tk.Button(self, text="자료 입력",height="1", width="20",bg="#00462A", fg="white", font=('맑은 고딕', 13),
                   command=lambda: master.switch_big_frame(User.UserPage, par_id, par_password)).pack()
-        tk.Button(self, text="임시저장본", width=20, height=1, bg="#00462A", fg="white",
+        tk.Label(self, text="").pack()
+        tk.Button(self, text="임시저장본",height="1", width="20",bg="#00462A", fg="white",font=('맑은 고딕', 13),
                   command=lambda: master.switch_frame(UserTemp.UserTemp)).pack()
-        tk.Button(self, text="자료 열람 및 수정", width=20, height=1, bg="#00462A", fg="white",
+        tk.Label(self, text="").pack()
+        tk.Button(self, text="자료 열람 및 수정",height="1", width="20",bg="#00462A", fg="white",font=('맑은 고딕', 13),
                   command=lambda: master.switch_big_frame(UserData.UserData, par_id, par_password)).pack()
 
 
