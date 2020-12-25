@@ -1,5 +1,5 @@
 import tkinter as tk
-from tkinter import ttk
+from tkinter import ttk, Frame
 from tkinter import filedialog
 import uuid
 import tkinter.font
@@ -68,6 +68,7 @@ class UserPage(tk.Frame):
         val_detail = ""  # 8. 상세정보
         ############
         array_refer = [] # 9-11. 출전 : [["자료1-대분류", "자료1-자료원문", "자료1-한글", "자료1-한자", "자료1-저자", "자료1=저자활동시기" ,,,]["자료2-한글",,,],,,]
+        array_refer_button = []
         real_array_refer = []
         array_entryPerson = []  # 12-1. 입력자 : [["자료1-입력자1","자료1-입력자2",,,],["자료2-입력자1","자료2-입력자2",,,,],,,]
         real_array_entryPerson =[]
@@ -79,6 +80,7 @@ class UserPage(tk.Frame):
         real_array_inspecDate = []
         ############
         array_relic = [] #14. 유물 : [["유물1-분류", "유물1-이름",,,,],["유물2-분류", "유물2-이름",,,],,,]
+        array_relic_button = []
         real_array_relic = []
         array_imageEntryPerson = [] #15-1. 이미지입력자
         real_array_imageEntryPerson = []
@@ -414,6 +416,15 @@ class UserPage(tk.Frame):
                 real_array_imageEntryDate.append([e.get_date() for e in array_imageEntryDate[i]])
             for i in range(len(array_imageInspecDate)):
                 real_array_imageInspecDate.append([e.get_date() for e in array_imageInspecDate[i]])
+
+            print(real_array_entryPerson)
+            print(real_array_entryDate)
+            print(real_array_inspecPerson)
+            print(real_array_inspecDate)
+            print(real_array_imageEntryPerson)
+            print(real_array_imageEntryDate)
+            print(real_array_imageInspecPerson)
+            print(real_array_imageInspecDate)
 
             mydb, mc = connect_db()
             sql1 = "INSERT INTO 임시조선시대공예정보(대상, 고유번호, 색인어한글, 색인어한자, 이명, 범칭, 관련어, 정의, 상세정보, 비고, userID) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)"
@@ -775,18 +786,23 @@ class UserPage(tk.Frame):
 
         #자주색 부분-자료추가
         def AddFrame9():
-            self.refer+=1
+            self.refer+=1 #만약 9번쨰 자료면 refer = 9
             self.num_entryPerson.append(0)
             self.num_inspecPerson.append(0)
             array_entryPerson.append([])
             array_entryDate.append([])
             array_inspecPerson.append([])
             array_inspecDate.append([])
-            def Add_entryPerson():
-                self.num_entryPerson[self.refer] +=1
+            def Add_entryPerson(button):
+                this_refer = self.refer #기존 저장해놓은 button들중 일치하는게 없으면 self.refer로
+                for i in range(len(array_refer_button)):
+                    if array_refer_button[i][0] == button:
+                        this_refer = i+1 #i번쨰에서 일치한다? -> 해당 버튼은 i+1번째 자료의 버튼
+
+                self.num_entryPerson[this_refer] +=1
                 frame9_extra_12_extra = tk.Frame(frame9_extra_12)
                 frame9_extra_12_extra.pack(fill=tk.X, padx=10)
-                lbl_entryPerson = tk.Label(frame9_extra_12_extra, text="입력자%s"%str(self.num_entryPerson[self.refer]), width=10).pack(side=tk.LEFT,padx=10)
+                lbl_entryPerson = tk.Label(frame9_extra_12_extra, text="입력자%s"%str(self.num_entryPerson[this_refer]), width=10).pack(side=tk.LEFT,padx=10)
                 entry_entryPerson = tk.Entry(frame9_extra_12_extra)
                 entry_entryPerson.pack(side=tk.LEFT,padx=10)
                 cal_entryPerson = tkcalendar.DateEntry(frame9_extra_12_extra, width=12, background="#00462A",
@@ -795,15 +811,19 @@ class UserPage(tk.Frame):
                                                        month=int(datetime.today().month),
                                                        day=int(datetime.today().day))
                 cal_entryPerson.pack(side=tk.LEFT, padx=10)
-                array_entryPerson[self.refer-1].append(entry_entryPerson)
-                array_entryDate[self.refer-1].append(cal_entryPerson)
+                array_entryPerson[this_refer-1].append(entry_entryPerson)
+                array_entryDate[this_refer-1].append(cal_entryPerson)
 
 
-            def Add_inspecPerson():
-                self.num_inspecPerson[self.refer] += 1
+            def Add_inspecPerson(button):
+                this_refer = self.refer
+                for i in range(len(array_refer_button)):
+                    if array_refer_button[i][1] == button:
+                        this_refer = i+1
+                self.num_inspecPerson[this_refer] += 1
                 frame9_extra_13_extra = tk.Frame(frame9_extra_13)
                 frame9_extra_13_extra.pack(fill=tk.X, padx=10)
-                lbl_inspecPerson = tk.Label(frame9_extra_13_extra, text="검수자%s"%str(self.num_inspecPerson[self.refer]), width=10).pack(side=tk.LEFT,padx=10)
+                lbl_inspecPerson = tk.Label(frame9_extra_13_extra, text="검수자%s"%str(self.num_inspecPerson[this_refer]), width=10).pack(side=tk.LEFT,padx=10)
                 entry_inspecPerson = tk.Entry(frame9_extra_13_extra)
                 entry_inspecPerson.pack(side=tk.LEFT,padx=10)
                 cal_inspecPerson = tkcalendar.DateEntry(frame9_extra_13_extra, width=12, background="#00462A",
@@ -812,10 +832,11 @@ class UserPage(tk.Frame):
                                                         month=int(datetime.today().month),
                                                         day=int(datetime.today().day))
                 cal_inspecPerson.pack(side=tk.LEFT, padx=10)
-                array_inspecPerson[self.refer-1].append(entry_inspecPerson)
-                array_inspecDate[self.refer-1].append(cal_inspecPerson)
+                array_inspecPerson[this_refer-1].append(entry_inspecPerson)
+                array_inspecDate[this_refer-1].append(cal_inspecPerson)
 
             array_refer_new = []
+            array_refer_button_new = []
             frame9_extra = tk.Frame(frame9_dynamic)
             frame9_extra.pack(fill=tk.X)
             tk.Label(frame9_extra,text="자료%s"%str(self.refer),bg="#00462A",fg="white").pack(side=tk.TOP,anchor=tk.W,padx=10,pady=10)
@@ -875,18 +896,24 @@ class UserPage(tk.Frame):
             #12. 입력자
             frame9_extra_12 = tk.Frame(frame9_extra)
             frame9_extra_12.pack(fill=tk.X, padx=10)
-            button_entryPerson = tk.Button(frame9_extra_12, text="입력자 추가", command=Add_entryPerson)
+            button_entryPerson = tk.Button(frame9_extra_12, text="입력자 추가", command=lambda : Add_entryPerson(button_entryPerson))
             button_entryPerson.pack(side=tk.TOP, anchor=tk.W, padx=10, pady=10)
+            array_refer_button_new.append(button_entryPerson)
             #13. 검수자
             frame9_extra_13 = tk.Frame(frame9_extra)
             frame9_extra_13.pack(fill=tk.X, padx=10)
-            button_entryPerson = tk.Button(frame9_extra_13, text="검수자 추가", command=Add_inspecPerson)
-            button_entryPerson.pack(side=tk.TOP, anchor=tk.W, padx=10, pady=10)
-            #구분선
+            button_inspecPerson = tk.Button(frame9_extra_13, text="검수자 추가", command=lambda : Add_inspecPerson(button_inspecPerson))
+            button_inspecPerson.pack(side=tk.TOP, anchor=tk.W, padx=10, pady=10)
+            array_refer_button_new.append(button_inspecPerson)
+
+
+            array_refer_button.append(array_refer_button_new)
+            array_refer.append(array_refer_new)
+
             canv = tk.Canvas(frame9_extra, height=10, width=1000)
             line = canv.create_line(00, 10, 1000, 10, fill="#00462A")
             canv.pack()
-            array_refer.append(array_refer_new)
+
 
         # 9. 대분류
         # 10. 자료원문
@@ -915,29 +942,39 @@ class UserPage(tk.Frame):
             array_imageEntryDate.append([])
             array_imageInspecPerson.append([])
             array_imageInspecDate.append([])
-            def Add_imagePerson():
-                self.num_imageEntryPerson[self.relic] +=1
+            def Add_imagePerson(button):
+                this_relic = self.relic  # 기존 저장해놓은 button들중 일치하는게 없으면 self.refer로
+                for i in range(len(array_relic_button)):
+                    if array_relic_button[i][0] == button:
+                        this_relic = i + 1  # i번쨰에서 일치한다? -> 해당 버튼은 i+1번째 자료의 버튼
+
+                self.num_imageEntryPerson[this_relic] +=1
                 frame14_extra_15_extra = tk.Frame(frame14_extra_15)
                 frame14_extra_15_extra.pack(side=tk.TOP,anchor=tk.W, padx=10)
-                lbl_imageEntryPerson = tk.Label(frame14_extra_15_extra, text="입력자%s"%str(self.num_imageEntryPerson[self.relic]), width=10).pack(side=tk.LEFT, padx=10)
+                lbl_imageEntryPerson = tk.Label(frame14_extra_15_extra, text="입력자%s"%str(self.num_imageEntryPerson[this_relic]), width=10).pack(side=tk.LEFT, padx=10)
                 entry_imageEntryPerson = tk.Entry(frame14_extra_15_extra)
                 entry_imageEntryPerson.pack(side=tk.LEFT, padx=10)
                 cal_imageEntryPerson = tkcalendar.DateEntry(frame14_extra_15_extra, width=12, background="#00462A",
                                                        foreground='white', borderwidth=2,
-                                                       year=int(datetime.today().year),
+                                                         year=int(datetime.today().year),
                                                        month=int(datetime.today().month),
                                                        day=int(datetime.today().day))
                 cal_imageEntryPerson.pack(side=tk.LEFT, padx=10)
                 imageEntryDate = datetime.today().strftime("%Y%m%d")
-                array_imageEntryPerson[self.relic-1].append(entry_imageEntryPerson)
-                array_imageEntryDate[self.relic-1].append(cal_imageEntryPerson)
+                array_imageEntryPerson[this_relic-1].append(entry_imageEntryPerson)
+                array_imageEntryDate[this_relic-1].append(cal_imageEntryPerson)
 
 
-            def Add_imageInspecPerson():
-                self.num_imageInspecPerson[self.relic] += 1
+            def Add_imageInspecPerson(button):
+                this_relic = self.relic  # 기존 저장해놓은 button들중 일치하는게 없으면 self.refer로
+                for i in range(len(array_relic_button)):
+                    if array_relic_button[i][1] == button:
+                        this_relic = i + 1  # i번쨰에서 일치한다? -> 해당 버튼은 i+1번째 자료의 버튼
+
+                self.num_imageInspecPerson[this_relic] += 1
                 frame14_extra_16_extra = tk.Frame(frame14_extra_16)
                 frame14_extra_16_extra.pack(fill=tk.X, padx=10)
-                lbl_entryPerson = tk.Label(frame14_extra_16_extra, text="검수자%s"%str(self.num_imageInspecPerson[self.relic]), width=10).pack(side=tk.LEFT, padx=10)
+                lbl_entryPerson = tk.Label(frame14_extra_16_extra, text="검수자%s"%str(self.num_imageInspecPerson[this_relic]), width=10).pack(side=tk.LEFT, padx=10)
                 entry_imageInspecPerson = tk.Entry(frame14_extra_16_extra)
                 entry_imageInspecPerson.pack(side=tk.LEFT, padx=10)
                 cal_imageInspecPerson = tkcalendar.DateEntry(frame14_extra_16_extra, width=12, background="#00462A",
@@ -946,12 +983,13 @@ class UserPage(tk.Frame):
                                                        month=int(datetime.today().month),
                                                        day=int(datetime.today().day))
                 cal_imageInspecPerson.pack(side=tk.LEFT, padx=10)
-                array_imageInspecPerson[self.relic-1].append(entry_imageInspecPerson)
-                array_imageInspecDate[self.relic-1].append(cal_imageInspecPerson)
+                array_imageInspecPerson[this_relic-1].append(entry_imageInspecPerson)
+                array_imageInspecDate[this_relic-1].append(cal_imageInspecPerson)
             def Browser_relic_image():
                 filename = filedialog.askopenfilename()
 
             array_relic_new = []
+            array_relic_button_new = []
             frame14_extra = tk.Frame(frame14_dynamic)
             frame14_extra.pack(fill=tk.X)
             tk.Label(frame14_extra, text="유물%s"%str(self.relic), bg="#00462A", fg="white").pack(side=tk.TOP,anchor=tk.W, padx=10, pady=10)
@@ -999,17 +1037,21 @@ class UserPage(tk.Frame):
             array_relic_new.append(entry_relic_sitePhone)
             array_relic_new.append(entry_relic_findSpot)
             array_relic_new.append(entry_relic_source)
-            array_relic.append(array_relic_new)
             #15. 이미지입력자
             frame14_extra_15 = tk.Frame(frame14_extra)
             frame14_extra_15.pack(fill=tk.X, padx=10)
-            button_entryPerson = tk.Button(frame14_extra_15, text="입력자 추가", command=Add_imagePerson)
-            button_entryPerson.pack(side=tk.TOP, anchor=tk.W, padx=10, pady=10)
+            button_imageEntryPerson = tk.Button(frame14_extra_15, text="입력자 추가", command=lambda : Add_imagePerson(button_imageEntryPerson))
+            button_imageEntryPerson.pack(side=tk.TOP, anchor=tk.W, padx=10, pady=10)
+            array_relic_button_new.append(button_imageEntryPerson)
             #16. 이미지검수자
             frame14_extra_16 = tk.Frame(frame14_extra)
             frame14_extra_16.pack(fill=tk.X, padx=10)
-            button_entryPerson = tk.Button(frame14_extra_16, text="검수자 추가", command=Add_imageInspecPerson)
-            button_entryPerson.pack(side=tk.TOP, anchor=tk.W, padx=10, pady=10)
+            button_imageInspecPerson = tk.Button(frame14_extra_16, text="검수자 추가", command=lambda : Add_imageInspecPerson(button_imageInspecPerson))
+            button_imageInspecPerson.pack(side=tk.TOP, anchor=tk.W, padx=10, pady=10)
+            array_relic_button_new.append(button_imageInspecPerson)
+
+            array_relic.append(array_relic_new)
+            array_relic_button.append(array_relic_button_new)
 
             # 구분선
             canv = tk.Canvas(frame14_extra, height=10, width=1000)
