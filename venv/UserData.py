@@ -62,6 +62,12 @@ class UserEdit(tk.Frame):
         frame00 = tk.Frame(self.scrollable_frame)
         frame00.pack(fill=tk.X)
 
+        # item = 고유번호이므로 이 값을 기준으로 db불러오시면 됩니다
+        mydb, mc = connect_db()
+        sql1 = "select * from 조선시대공예정보 where 고유번호=%s"
+        mc.execute(sql1, item)
+        chosunList = mc.fetchall()
+
         entry_state = tk.IntVar()
 
         entry_state_subject = tk.Radiobutton(frame00, text="대상", variable=entry_state, value=1)
@@ -69,10 +75,15 @@ class UserEdit(tk.Frame):
         entry_state_defer = tk.Radiobutton(frame00, text="보류", variable=entry_state, value=3)
         entry_state_delete = tk.Radiobutton(frame00, text="삭제", variable=entry_state, value=4)
 
-        entry_state_subject.select()
+        entry_state_subject.deselect()
         entry_state_nonsubject.deselect()
         entry_state_defer.deselect()
         entry_state_delete.deselect()
+
+        if(chosunList[0][0] == "대상") : entry_state_subject.select()
+        elif(chosunList[0][0] == "비대상") : entry_state_nonsubject.select()
+        elif (chosunList[0][0] == "보류"): entry_state_defer.select()
+        elif(chosunList[0][0] == "삭제") : entry_state_delete.select()
 
         entry_state_delete.pack(side=tk.RIGHT, padx=10)
         entry_state_defer.pack(side=tk.RIGHT, padx=10)
@@ -96,19 +107,13 @@ class UserEdit(tk.Frame):
         entry_ID.configure(state="disabled")
         entry_ID.pack(side=tk.LEFT, padx=10, pady=10)
 
-#item = 고유번호이므로 이 값을 기준으로 db불러오시면 됩니다
-        mydb, mc = connect_db()
-        sql1 = "select * from 조선시대공예정보 where 고유번호=%s"
-        mc.execute(sql1, item)
-        chosunList = mc.fetchall()
-
         # 1.색인어(한글)
         frame1 = tk.Frame(self.scrollable_frame)
         frame1.pack(fill=tk.X)
 
         lbl_indexKorean = tk.Label(frame1, text="색인어(한글)", width=10)
         lbl_indexKorean.pack(side=tk.LEFT, padx=10, pady=10)
-
+        indexKorean = tk.StringVar()
         entry_indexKorean = tk.Entry(frame1, textvariable=indexKorean)
         entry_indexKorean.insert(0, chosunList[0][2])
         entry_indexKorean.pack(side=tk.LEFT, padx=10)
@@ -119,7 +124,7 @@ class UserEdit(tk.Frame):
 
         lbl_indexChinese = tk.Label(frame2, text="색인어(한자)", width=10)
         lbl_indexChinese.pack(side=tk.LEFT, padx=10, pady=10)
-
+        indexChinese = tk.StringVar()
         entry_indexChinese = tk.Entry(frame2, textvariable=indexChinese)
         entry_indexChinese.insert(0, chosunList[0][3])
         entry_indexChinese.pack(side=tk.LEFT, padx=10)
@@ -130,7 +135,7 @@ class UserEdit(tk.Frame):
 
         lbl_nickname = tk.Label(frame3, text="이명", width=10)
         lbl_nickname.pack(side=tk.LEFT, padx=10, pady=10)
-
+        nickname = tk.StringVar()
         entry_nickname = tk.Entry(frame3, textvariable=nickname)
         entry_nickname.insert(0, chosunList[0][4])
         entry_nickname.pack(side=tk.LEFT, padx=10)
@@ -575,8 +580,9 @@ class UserEdit(tk.Frame):
         note = tk.StringVar()
         lbl_note = tk.Label(frame17, text="비고", width=10)
         lbl_note.pack(side=tk.LEFT, padx=10, pady=10)
-        entry_note = tk.Entry(frame17, textvariable=chosunList[0][9])
+        entry_note = tk.Entry(frame17, textvariable=note)
         entry_note.pack(fill=tk.BOTH, padx=10, expand=True)
+        entry_note.insert(0, chosunList[0][9])
 
         # 구분선
         canv = tk.Canvas(self.scrollable_frame, height=10, width=1000)
@@ -612,7 +618,7 @@ class UserData(tk.Frame):
 
             for i in range(len(treelist)):
                 # 이부분에서 iid에 고유번호 들어가게 구성
-                self.treeview.insert('', 'end', text=i, values=treelist[i], iid=str(i))
+                self.treeview.insert('', 'end', text=i, values=treelist[i], iid=treelist[i][0])
 
             self.treeview.pack(side=tk.LEFT)
             self.treeview.bind('<1>', self.NewFrame)
@@ -668,14 +674,13 @@ class UserData(tk.Frame):
 
         for i in range(len(treelist)):
 #이부분에서 iid에 고유번호 들어가게 구성
-            self.treeview.insert('','end',text=i, values=treelist[i], iid=str(i))
+            self.treeview.insert('','end',text=i, values=treelist[i], iid=treelist[i][0])
 
         self.treeview.pack(side=tk.LEFT)
         self.treeview.bind('<1>', self.NewFrame)
 
     def NewFrame(self,event):
         item = self.treeview.identify('item', event.x, event.y)
-        print(str(item))
         self.master.title("조선시대공예 DB입력기")
         self.pack()
         UserEdit_tk = tk.Tk()

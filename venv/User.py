@@ -52,8 +52,6 @@ class UserPage(tk.Frame):
         # 멤버변수
         val_username = par_id  # 아이디
         val_password = par_password  # 비밀번호
-        print(val_username)
-        print(val_password)
         val_state = ""  # 00. 상태
         val_ID = ""  # 0. ID(고유번호)
         val_indexKorean = ""  # 1. 색인어(한글)
@@ -104,9 +102,6 @@ class UserPage(tk.Frame):
             # 8. 상세정보, 마지막 문자인 /n제거하기 위한 방법
             if entry_detail.get(1.0, tk.END+"-1c") == '': return False
             # 9-11. 자료
-            # 17.비고
-            if note.get() == '': return False
-
             for i in range(len(array_refer)):
                 for e in array_refer[i]:
                     if e.get()== '': return False
