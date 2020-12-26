@@ -416,9 +416,7 @@ class UserPage(tk.Frame):
 
             mydb, mc = connect_db()
             sql1 = "INSERT INTO 임시조선시대공예정보(대상, 고유번호, 색인어한글, 색인어한자, 이명, 범칭, 관련어, 정의, 상세정보, 비고, userID) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)"
-            val1 = (
-            val_state, val_ID, val_indexKorean, val_indexChinese, val_nickname, val_generalName, val_relatedWord,
-            val_definition, val_detail, val_note, val_username)
+            val1 = (val_state, val_ID, val_indexKorean, val_indexChinese, val_nickname, val_generalName, val_relatedWord, val_definition, val_detail, val_note, val_username)
             sql2 = "INSERT INTO 임시중분류항목(고유번호, 중분류) VALUES (%s, %s)"
             sql3 = "INSERT INTO 임시소분류항목(고유번호, 소분류) VALUES (%s, %s)"
             sql4 = "INSERT INTO 임시출전(대분류, 자료원문, 한글, 한자, 저자, 저자활동시기, 간행시기, 텍스트소장처, 소장처번호및링크, 고유번호) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s)"

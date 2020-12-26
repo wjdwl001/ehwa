@@ -14,7 +14,7 @@ def connect_db():
         host="localhost",
         port=3306,
         user="root",
-        passwd="esther0916",
+        passwd="",
         database="ehwa",
         charset = 'utf8'
     )
@@ -118,13 +118,13 @@ class UserEdit(tk.Frame):
         val_note = ""  # 17. 비고
 
         def check():
-            if indexKorean.get() == '': return False
-            if indexChinese.get() == '': return False  # 2. 색인어(한자)
-            if nickname.get() == '': return False  # 3. 이명
-            if generalName.get() == '': return False  # 4. 범칭
-            if relatedWord.get() == '': return False
+            if entry_indexKorean.get() == '': return False
+            if entry_indexChinese.get() == '': return False  # 2. 색인어(한자)
+            if entry_nickname.get() == '': return False  # 3. 이명
+            if entry_generalName.get() == '': return False  # 4. 범칭
+            if entry_relatedWord.get() == '': return False
             # 7-2. 정의
-            if definition.get() == '': return False
+            if entry_definition.get() == '': return False
             # 8. 상세정보, 마지막 문자인 /n제거하기 위한 방법
             if entry_detail.get(1.0, tk.END + "-1c") == '': return False
             # 9-11. 자료
@@ -155,6 +155,26 @@ class UserEdit(tk.Frame):
                 messagebox.showinfo("알림", "빈칸이 존재합니다!")
                 return
 
+            mydb, mc = connect_db()
+            del_sql1 = "DELETE FROM 입력정보"
+            del_sql2 = "DELETE FROM 검수정보"
+            del_sql3 = "DELETE FROM 이미지입력정보"
+            del_sql4 = "DELETE FROM 이미지검수정보"
+            del_sql5 = "DELETE FROM 유물"
+            del_sql6 = "DELETE FROM 소분류항목"
+            del_sql7 = "DELETE FROM 중분류항목"
+            del_sql8 = "DELETE FROM 출전"
+            del_sql9 = "DELETE FROM 조선시대공예정보"
+            mc.execute(del_sql1)
+            mc.execute(del_sql2)
+            mc.execute(del_sql3)
+            mc.execute(del_sql4)
+            mc.execute(del_sql5)
+            mc.execute(del_sql6)
+            mc.execute(del_sql7)
+            mc.execute(del_sql8)
+            mc.execute(del_sql9)
+
             if entry_state.get() == 1:
                 val_state = "대상"
             if entry_state.get() == 2:
@@ -164,10 +184,10 @@ class UserEdit(tk.Frame):
             if entry_state.get() == 4:
                 val_state = "삭제"
             val_ID  # 0. ID(고유번호)
-            val_indexKorean = indexKorean.get()  # 1. 색인어(한글)
-            val_indexChinese = indexChinese.get()  # 2. 색인어(한자)
-            val_nickname = nickname.get() # 3. 이명
-            val_generalName = generalName.get()# 4. 범칭
+            val_indexKorean = entry_indexKorean.get()  # 1. 색인어(한글)
+            val_indexChinese = entry_indexChinese.get()  # 2. 색인어(한자)
+            val_nickname = entry_nickname.get() # 3. 이명
+            val_generalName = entry_generalName.get()# 4. 범칭
             # 5. 중분류항목
             if middleClass_product.get():
                 array_middleClass.append("제작품")
@@ -202,14 +222,14 @@ class UserEdit(tk.Frame):
                 array_subClass.append("복합")
 
             # 7. 관련어
-            val_relatedWord = relatedWord.get()
+            val_relatedWord = entry_relatedWord.get()
             # 7-2. 정의
-            val_definition = definition.get()
+            val_definition = entry_definition.get()
             # 8. 상세정보, 마지막 문자인 /n제거하기 위한 방법
             val_detail = entry_detail.get(1.0, tk.END+"-1c")
             # 9-11. 자료
             # 17.비고
-            val_note = note.get()
+            val_note = entry_note.get()
 
             for i in range(len(array_refer)):
                 real_array_refer.append([e.get() for e in array_refer[i]])
@@ -235,6 +255,117 @@ class UserEdit(tk.Frame):
                 real_array_imageEntryDate.append([e.get_date() for e in array_imageEntryDate[i]])
             for i in range(len(array_imageInspecDate)):
                 real_array_imageInspecDate.append([e.get_date() for e in array_imageInspecDate[i]])
+
+
+            sql1 = "INSERT INTO 조선시대공예정보(대상, 고유번호, 색인어한글, 색인어한자, 이명, 범칭, 관련어, 정의, 상세정보, 비고, userID) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)"
+            val1 = (val_state, val_ID, val_indexKorean, val_indexChinese, val_nickname, val_generalName, val_relatedWord, val_definition, val_detail, val_note, val_username)
+            sql2 = "INSERT INTO 중분류항목(고유번호, 중분류) VALUES (%s, %s)"
+            sql3 = "INSERT INTO 소분류항목(고유번호, 소분류) VALUES (%s, %s)"
+            sql4 = "INSERT INTO 출전(대분류, 자료원문, 한글, 한자, 저자, 저자활동시기, 간행시기, 텍스트소장처, 소장처번호및링크, 고유번호) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s)"
+            sql5 = "INSERT INTO 입력정보(입력자, 입력일, 고유번호, 출전한글) VALUES (%s, %s, %s, %s)"
+            sql6 = "INSERT INTO 검수정보(검수자, 검수일, 고유번호, 출전한글) VALUES (%s, %s, %s, %s)"
+            sql7 = "INSERT INTO 유물(분류, 명칭, 국명, 시기, 소장처, 소장처번호, 출토지, 출전및출처, 고유번호) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s)"
+            sql8 = "INSERT INTO 이미지입력정보(입력자, 입력일, 고유번호, 유물명칭) VALUES (%s, %s, %s, %s)"
+            sql9 = "INSERT INTO 이미지검수정보(검수자, 검수일, 고유번호, 유물명칭) VALUES (%s, %s, %s, %s)"
+
+            try:
+                mc.execute(sql1, val1)
+            except pymysql.InternalError as error:
+                messagebox.showinfo("알림", "조선시대공예정보 입력에 실패했습니다!")
+                code, message = error.args
+                print(">>>>>>>>>>>>>", code, message)
+                return
+
+            try:
+                for i in array_middleClass:
+                    val2 = (val_ID, i)
+                    mc.execute(sql2, val2)
+            except pymysql.InternalError as error:
+                messagebox.showinfo("알림", "중분류항목 입력에 실패했습니다!")
+                code, message = error.args
+                print(">>>>>>>>>>>>>", code, message)
+                return
+
+            try:
+                for i in array_subClass:
+                    val3 = (val_ID, i)
+                    mc.execute(sql3, val3)
+            except pymysql.InternalError as error:
+                messagebox.showinfo("알림", "소분류항목 입력에 실패했습니다!")
+                code, message = error.args
+                print(">>>>>>>>>>>>>", code, message)
+                return
+
+            try:
+                for i in real_array_refer:
+                    val4 = i
+                    val4.append(val_ID)
+                    val4 = tuple(val4)
+                    mc.execute(sql4, val4)
+            except pymysql.InternalError as error:
+                messagebox.showinfo("알림", "출전 입력에 실패했습니다!")
+                code, message = error.args
+                print(">>>>>>>>>>>>>", code, message)
+                return
+
+            try:
+                for i in range(0, len(real_array_refer)):
+                    for j, k in zip(real_array_entryPerson[i], array_entryDate[i]):
+                        val5 = (j, k.get_date(), val_ID, real_array_refer[i][2])
+                        mc.execute(sql5, val5)
+            except pymysql.InternalError as error:
+                messagebox.showinfo("알림", "입력정보 입력에 실패했습니다!")
+                code, message = error.args
+                print(">>>>>>>>>>>>>", code, message)
+                return
+
+            try:
+                for i in range(0, len(real_array_refer)):
+                    for l, m in zip(real_array_inspecPerson[i], array_inspecDate[i]):
+                        val6 = (l, m.get_date(), val_ID, real_array_refer[i][2])
+                        mc.execute(sql6, val6)
+            except pymysql.InternalError as error:
+                messagebox.showinfo("알림", "검수정보 입력에 실패했습니다!")
+                code, message = error.args
+                print(">>>>>>>>>>>>>", code, message)
+                return
+
+            try:
+                for i in real_array_relic:
+                    val7 = i
+                    val7.append(val_ID)
+                    val7 = tuple(val7)
+                    mc.execute(sql7, val7)
+            except pymysql.InternalError as error:
+                messagebox.showinfo("알림", "유물 입력에 실패했습니다!")
+                code, message = error.args
+                print(">>>>>>>>>>>>>", code, message)
+                return
+
+            try:
+                for i in range(0, len(real_array_relic)):
+                    for j, k in zip(real_array_imageEntryPerson[i], real_array_imageEntryDate[i]):
+                        val8 = (j, k, val_ID, real_array_relic[i][1])
+                        mc.execute(sql8, val8)
+            except pymysql.InternalError as error:
+                messagebox.showinfo("알림", "이미지입력정보 입력에 실패했습니다!")
+                code, message = error.args
+                print(">>>>>>>>>>>>>", code, message)
+                return
+
+            try:
+                for i in range(0, len(real_array_relic)):
+                    for l, m in zip(real_array_imageInspecPerson[i], real_array_imageInspecDate[i]):
+                        val9 = (l, m, val_ID, real_array_relic[i][1])
+                        mc.execute(sql9, val9)
+            except pymysql.InternalError as error:
+                messagebox.showinfo("알림", "이미지검수정보 입력에 실패했습니다!")
+                code, message = error.args
+                print(">>>>>>>>>>>>>", code, message)
+                return
+
+            mydb.commit()
+            messagebox.showinfo("알림", "수정 완료!")
 
         # item = 고유번호이므로 이 값을 기준으로 db불러오시면 됩니다
         mydb, mc = connect_db()
@@ -289,8 +420,8 @@ class UserEdit(tk.Frame):
         lbl_indexKorean.pack(side=tk.LEFT, padx=10, pady=10)
         indexKorean = tk.StringVar()
         entry_indexKorean = tk.Entry(frame1, textvariable=indexKorean)
-        entry_indexKorean.insert(0, chosunList[0][2])
         entry_indexKorean.pack(side=tk.LEFT, padx=10)
+        entry_indexKorean.insert(0, chosunList[0][2])
 
         # 2. 색인어(한자)
         frame2 = tk.Frame(self.scrollable_frame)
@@ -300,8 +431,8 @@ class UserEdit(tk.Frame):
         lbl_indexChinese.pack(side=tk.LEFT, padx=10, pady=10)
         indexChinese = tk.StringVar()
         entry_indexChinese = tk.Entry(frame2, textvariable=indexChinese)
-        entry_indexChinese.insert(0, chosunList[0][3])
         entry_indexChinese.pack(side=tk.LEFT, padx=10)
+        entry_indexChinese.insert(0, chosunList[0][3])
 
         # 3. 이명
         frame3 = tk.Frame(self.scrollable_frame)
@@ -311,8 +442,8 @@ class UserEdit(tk.Frame):
         lbl_nickname.pack(side=tk.LEFT, padx=10, pady=10)
         nickname = tk.StringVar()
         entry_nickname = tk.Entry(frame3, textvariable=nickname)
-        entry_nickname.insert(0, chosunList[0][4])
         entry_nickname.pack(side=tk.LEFT, padx=10)
+        entry_nickname.insert(0, chosunList[0][4])
 
         # 4. 범칭
         frame4 = tk.Frame(self.scrollable_frame)
@@ -324,8 +455,8 @@ class UserEdit(tk.Frame):
         lbl_generalName.pack(side=tk.LEFT, padx=10, pady=10)
 
         entry_generalName = tk.Entry(frame4, textvariable=generalName)
-        entry_generalName.insert(0, chosunList[0][5])
         entry_generalName.pack(side=tk.LEFT, padx=10)
+        entry_generalName.insert(0, chosunList[0][5])
 
         # 5. 중분류항목
         frame5 = tk.Frame(self.scrollable_frame)
@@ -447,8 +578,8 @@ class UserEdit(tk.Frame):
         lbl_relatedWord.pack(side=tk.LEFT, padx=10, pady=10)
 
         entry_relatedWord = tk.Entry(frame7, textvariable=relatedWord)
-        entry_relatedWord.insert(0, chosunList[0][6])
         entry_relatedWord.pack(side=tk.LEFT, padx=10)
+        entry_relatedWord.insert(0, chosunList[0][6])
 
         # 7-2. 정의
         frame7_2 = tk.Frame(self.scrollable_frame)
@@ -460,8 +591,8 @@ class UserEdit(tk.Frame):
         lbl_definition.pack(side=tk.LEFT, padx=10, pady=10)
 
         entry_definition = tk.Entry(frame7_2, textvariable=definition)
-        entry_definition.insert(0, chosunList[0][7])
         entry_definition.pack(side=tk.LEFT, padx=10)
+        entry_definition.insert(0, chosunList[0][7])
 
         # 8. 상세정보
         frame8 = tk.Frame(self.scrollable_frame)
@@ -1041,7 +1172,7 @@ class UserEdit(tk.Frame):
         # 저장
         frame = tk.Frame(self.scrollable_frame)
         frame.pack(side=tk.BOTTOM)
-        btnSave = tk.Button(frame, text="저장")
+        btnSave = tk.Button(frame, text="저장", command=save)
         btnSave.pack(side=tk.LEFT, padx=10, pady=10)
 
 
