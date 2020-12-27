@@ -263,8 +263,6 @@ class UserPage(tk.Frame):
                 return
 
             try:
-                print(real_array_entryPerson)
-                print(real_array_entryDate)
                 for i in range(0, len(real_array_refer)):
                     for j, k in zip(real_array_entryPerson[i], array_entryDate[i]):
                         val5 = (j, k.get_date(), val_ID, real_array_refer[i][2])
@@ -276,8 +274,6 @@ class UserPage(tk.Frame):
                 return
 
             try:
-                print(real_array_inspecPerson)
-                print(real_array_inspecDate)
                 for i in range(0, len(real_array_refer)):
                     for l, m in zip(real_array_inspecPerson[i], array_inspecDate[i]):
                         val6 = (l, m.get_date(), val_ID, real_array_refer[i][2])
@@ -301,8 +297,6 @@ class UserPage(tk.Frame):
                 return
 
             try:
-                print(real_array_imageEntryPerson)
-                print(real_array_imageEntryDate)
                 for i in range(0, len(real_array_relic)):
                     for j, k in zip(real_array_imageEntryPerson[i], real_array_imageEntryDate[i]):
                         val8 = (j, k, val_ID, real_array_relic[i][1])
@@ -314,8 +308,6 @@ class UserPage(tk.Frame):
                 return
 
             try:
-                print(real_array_imageInspecPerson)
-                print(real_array_imageInspecDate)
                 for i in range(0, len(real_array_relic)):
                     for l, m in zip(real_array_imageInspecPerson[i], real_array_imageInspecDate[i]):
                         val9 = (l, m, val_ID, real_array_relic[i][1])

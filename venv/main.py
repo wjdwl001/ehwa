@@ -6,6 +6,7 @@ import pymysql
 from tkinter import messagebox
 import User
 import UserData
+import UserTemp
 
 #color : #00462A #77E741
 
@@ -249,7 +250,7 @@ class UserMenu(tk.Frame):
                   command=lambda: master.switch_big_frame(User.UserPage, par_id, par_password)).pack()
         tk.Label(self, text="").pack()
         tk.Button(self, text="임시저장본",height="1", width="20",bg="#00462A", fg="white",font=('맑은 고딕', 13),
-                  command=lambda: master.switch_frame(UserTemp.UserTemp)).pack()
+                  command=lambda: master.switch_big_frame(UserTemp.UserTemp, par_id, par_password)).pack()
         tk.Label(self, text="").pack()
         tk.Button(self, text="자료 열람 및 수정",height="1", width="20",bg="#00462A", fg="white",font=('맑은 고딕', 13),
                   command=lambda: master.switch_big_frame(UserData.UserData, par_id, par_password)).pack()

@@ -155,26 +155,6 @@ class UserEdit(tk.Frame):
                 messagebox.showinfo("알림", "빈칸이 존재합니다!")
                 return
 
-            mydb, mc = connect_db()
-            del_sql1 = "DELETE FROM 입력정보"
-            del_sql2 = "DELETE FROM 검수정보"
-            del_sql3 = "DELETE FROM 이미지입력정보"
-            del_sql4 = "DELETE FROM 이미지검수정보"
-            del_sql5 = "DELETE FROM 유물"
-            del_sql6 = "DELETE FROM 소분류항목"
-            del_sql7 = "DELETE FROM 중분류항목"
-            del_sql8 = "DELETE FROM 출전"
-            del_sql9 = "DELETE FROM 조선시대공예정보"
-            mc.execute(del_sql1)
-            mc.execute(del_sql2)
-            mc.execute(del_sql3)
-            mc.execute(del_sql4)
-            mc.execute(del_sql5)
-            mc.execute(del_sql6)
-            mc.execute(del_sql7)
-            mc.execute(del_sql8)
-            mc.execute(del_sql9)
-
             if entry_state.get() == 1:
                 val_state = "대상"
             if entry_state.get() == 2:
@@ -184,10 +164,10 @@ class UserEdit(tk.Frame):
             if entry_state.get() == 4:
                 val_state = "삭제"
             val_ID  # 0. ID(고유번호)
-            val_indexKorean = entry_indexKorean.get()  # 1. 색인어(한글)
-            val_indexChinese = entry_indexChinese.get()  # 2. 색인어(한자)
-            val_nickname = entry_nickname.get() # 3. 이명
-            val_generalName = entry_generalName.get()# 4. 범칭
+            val_indexKorean = indexKorean.get()  # 1. 색인어(한글)
+            val_indexChinese = indexChinese.get()  # 2. 색인어(한자)
+            val_nickname = nickname.get() # 3. 이명
+            val_generalName = generalName.get()# 4. 범칭
             # 5. 중분류항목
             if middleClass_product.get():
                 array_middleClass.append("제작품")
@@ -222,14 +202,14 @@ class UserEdit(tk.Frame):
                 array_subClass.append("복합")
 
             # 7. 관련어
-            val_relatedWord = entry_relatedWord.get()
+            val_relatedWord = relatedWord.get()
             # 7-2. 정의
-            val_definition = entry_definition.get()
+            val_definition = definition.get()
             # 8. 상세정보, 마지막 문자인 /n제거하기 위한 방법
             val_detail = entry_detail.get(1.0, tk.END+"-1c")
             # 9-11. 자료
             # 17.비고
-            val_note = entry_note.get()
+            val_note = note.get()
 
             for i in range(len(array_refer)):
                 real_array_refer.append([e.get() for e in array_refer[i]])
@@ -256,6 +236,25 @@ class UserEdit(tk.Frame):
             for i in range(len(array_imageInspecDate)):
                 real_array_imageInspecDate.append([e.get_date() for e in array_imageInspecDate[i]])
 
+            mydb, mc = connect_db()
+            del_sql1 = "DELETE FROM 입력정보 WHERE 고유번호=%s"
+            del_sql2 = "DELETE FROM 검수정보 WHERE 고유번호=%s"
+            del_sql3 = "DELETE FROM 이미지입력정보 WHERE 고유번호=%s"
+            del_sql4 = "DELETE FROM 이미지검수정보 WHERE 고유번호=%s"
+            del_sql5 = "DELETE FROM 유물 WHERE 고유번호=%s"
+            del_sql6 = "DELETE FROM 소분류항목 WHERE 고유번호=%s"
+            del_sql7 = "DELETE FROM 중분류항목 WHERE 고유번호=%s"
+            del_sql8 = "DELETE FROM 출전 WHERE 고유번호=%s"
+            del_sql9 = "DELETE FROM 조선시대공예정보 WHERE 고유번호=%s"
+            mc.execute(del_sql1, val_ID)
+            mc.execute(del_sql2, val_ID)
+            mc.execute(del_sql3, val_ID)
+            mc.execute(del_sql4, val_ID)
+            mc.execute(del_sql5, val_ID)
+            mc.execute(del_sql6, val_ID)
+            mc.execute(del_sql7, val_ID)
+            mc.execute(del_sql8, val_ID)
+            mc.execute(del_sql9, val_ID)
 
             sql1 = "INSERT INTO 조선시대공예정보(대상, 고유번호, 색인어한글, 색인어한자, 이명, 범칭, 관련어, 정의, 상세정보, 비고, userID) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)"
             val1 = (val_state, val_ID, val_indexKorean, val_indexChinese, val_nickname, val_generalName, val_relatedWord, val_definition, val_detail, val_note, val_username)
@@ -1182,7 +1181,7 @@ class UserData(tk.Frame):
     def __init__(self, master, par_id, par_password, *args, **kwargs):
         def search_by_name(): #검색하면 시행되는 함수입니다 내부 데이터 db코드 부탁드려요
             self.treeview.delete(*self.treeview.get_children())
-            columns = ["고유번호", "색인어", "정의"]
+            columns = ["고유번호", "색인어", "정의", "작성자"]
 
             newlist = []
             for row in rowlist:
@@ -1191,10 +1190,12 @@ class UserData(tk.Frame):
 
             self.treeview.column("#1", width=100)
             self.treeview.column("#2", width=200)
-            self.treeview.column("#3", width=500)
+            self.treeview.column("#3", width=300)
+            self.treeview.column("#4", width=200)
             self.treeview.heading("#1", text="고유번호")
             self.treeview.heading("#2", text="색인어")
             self.treeview.heading("#3", text="정의")
+            self.treeview.heading("#4", text="작성자")
 
             for i in range(len(treelist)):
                 # 이부분에서 iid에 고유번호 들어가게 구성
@@ -1205,17 +1206,17 @@ class UserData(tk.Frame):
 
         def show_all():
             self.treeview.delete(*self.treeview.get_children())
-            columns = ["고유번호", "색인어", "정의"]
+            columns = ["고유번호", "색인어", "정의", "작성자"]
 
             mydb, mc = connect_db()
-            sql = "select 고유번호, 색인어한글, 정의 from 조선시대공예정보"
+            sql = "select 고유번호, 색인어한글, 정의, userID from 조선시대공예정보"
             mc.execute(sql)
             rows = mc.fetchall()
             rowlist = []
             for row in rows:
                 rowlist.append(row)
 
-            columns = ["고유번호", "색인어", "정의"]
+            columns = ["고유번호", "색인어", "정의", "작성자"]
             treelist = rowlist
 
             for i in range(len(treelist)):
@@ -1250,19 +1251,18 @@ class UserData(tk.Frame):
         button_all = tk.Button(frame_search, width=8, height=1, text="전체보기", command=show_all)
         button_all.grid(column="4", row="0")
 
-
         frame_treelist = tk.Frame(width = 800, height = 550)
         frame_treelist.pack()
 
         mydb, mc = connect_db()
-        sql = "select 고유번호, 색인어한글, 정의 from 조선시대공예정보"
+        sql = "select 고유번호, 색인어한글, 정의, userID from 조선시대공예정보"
         mc.execute(sql)
         rows = mc.fetchall()
         rowlist = []
         for row in rows:
             rowlist.append(row)
 
-        columns = ["고유번호", "색인어", "정의"]
+        columns = ["고유번호", "색인어", "정의", "작성자"]
         treelist = rowlist
 
         self.treeview = tkinter.ttk.Treeview(frame_treelist, columns=columns, show="headings", height=500)
@@ -1272,10 +1272,12 @@ class UserData(tk.Frame):
 
         self.treeview.column("#1", width = 100)
         self.treeview.column("#2", width = 200)
-        self.treeview.column("#3", width = 500)
+        self.treeview.column("#3", width = 300)
+        self.treeview.column("#4", width = 200)
         self.treeview.heading("#1", text="고유번호")
         self.treeview.heading("#2", text="색인어")
         self.treeview.heading("#3", text="정의")
+        self.treeview.heading("#4", text="작성자")
 
         for i in range(len(treelist)):
 #이부분에서 iid에 고유번호 들어가게 구성
